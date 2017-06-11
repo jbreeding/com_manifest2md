@@ -7,7 +7,7 @@
     <author>Emmanuel Lecoester (v1) - Marc Letouzé (v2)</author>
     <authorEmail>elecoest@gmail.com - marc.letouze@liubov.net</authorEmail>
     <authorUrl>https://github.com/jbreeding/Manifest2md</authorUrl>
-    <version>1.2.0</version>
+    <version>2.0</version>
     <description>Manifest To MarkDown V2</description>
 
     <install> <!-- Runs on install -->
@@ -94,13 +94,7 @@
     </config>
     <!-- Update servers -->
     <updateservers>
-        <server type="extension" priority="1" name="Manifest2md Update Server">
-            https://github.com/elecoest/Manifest2MD/archive/manifest2md_update.xml
-        </server>
+        <server type="extension" priority="1" name="Manifest2md Update Server">https://github.com/jbreeding/Manifest2MD-v2/blob/master/updates/update_manifest2md.xml</server>
     </updateservers>
-
-    <plugins>
-        <plugin group="search" plugin="manifest2md"/>
-    </plugins>
     <scriptfile>script.php</scriptfile>
 </extension>
