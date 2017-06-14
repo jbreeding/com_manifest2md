@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Manifest2md" basedir="." default="copy_to_joomla-cms">
  
-	<property name="joomla-cms" value="../joomla-cms" override="true" />
-	<property name="admincomp" value="../joomla-cms/administrator/components/com_manifest2md" override="true" />
-    <property name="sitecomp" value="../joomla-cms/components/com_manifest2md" override="true" />
+	<property name="joomla-cms" value="/var/www/html/joomla-cms" override="true" />
+	<property name="admincomp" value="/var/www/html/joomla-cms/administrator/components/com_manifest2md" override="true" />
+        <property name="sitecomp" value="/var/www/html/joomla-cms/components/com_manifest2md" override="true" />
 	<property name="src" value="${project.basedir}" override="true" />
 	<fileset dir="./site" id="component_files">
 		<include name="**" />
@@ -40,10 +40,10 @@
 		<include name="media/*" />
 		<include name="media/css/*.*" />
 		<include name="media/js/*.*" />
+                
  		<include name="site/language/*.*" />           
 		<include name="site/controllers/*" />
 		<include name="site/helpers/*" />
-                
 		<include name="site/models/*" />
 		<include name="site/views/*.*" />
 		<include name="site/views/extension/*" />
