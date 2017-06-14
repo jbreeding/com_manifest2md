@@ -40,9 +40,10 @@
 		<include name="media/*" />
 		<include name="media/css/*.*" />
 		<include name="media/js/*.*" />
-        
+ 		<include name="site/language/*.*" />           
 		<include name="site/controllers/*" />
 		<include name="site/helpers/*" />
+                
 		<include name="site/models/*" />
 		<include name="site/views/*.*" />
 		<include name="site/views/extension/*" />
