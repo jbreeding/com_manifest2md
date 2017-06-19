@@ -11,7 +11,7 @@ The final documents are written in MarkDown format.
 7) Click MakeMD button to generate the documentation.
 
 Manifest2MD makes Documents from .xml files of Published Extensions ...
-Generate with Manifest2MD:
+Generated with Manifest2MD:
 
 ## Configuration / Parameters
 ### Manifest To MarkDown [manifest2md]
