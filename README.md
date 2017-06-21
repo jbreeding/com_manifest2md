@@ -14,18 +14,19 @@ Multi-language (fr-FR, en-GB)
 
 Generated with Manifest2MD:
 
-## Configuration / Parameters
+# Component manifest2md
+## Configuration et Parameters
 ### Manifest To MarkDown [manifest2md]
 #### Description: 
 | Option | Description | Type | Value |
 | ------ | ----------- | -----|-------|
-|  Répertoire | Répertoire des documents créés par MakeMD | text |  (default: `/documentation`)|
-|  Langage | Choisissez votre langage | language |  (default: `fr-FR`)|
-|  Suppression Rép. précédent | Supprime le répertoire créé par MakeMD lors de la pécédente exécution | list | `Non`, `Oui` (default: `no`)|
-|  Type de Doc | Génère une documentation orientée Utilisateurs ou Développeurs | list | `Mode Développeur`, `Mode Utilisateur` (default: `user`)|
+|  Home directory | Home directory for your documentation  | text |  (default: `/documentation`)|
+|  Language | Choose your langage | language |  (default: `fr-FR`)|
+|  Delete MakeMD Folder | Delete the Folder created by MakeMD during the previous execution | list | `Non`, `Oui` (default: `no`)|
+|  Documentation type | Manage the documentation toward Users or Developers | list | `Developer Mode`, `User Mode` (default: `user`)|
 |  Template Config |  | textarea | |
 |  Template Model |  | textarea | |
-|  Template Vue |  | textarea | |
+|  Template View |  | textarea | |
 |  Template Module |  | textarea | |
 |  Template Plugin |  | textarea | |
 ### Droits [permissions]
@@ -45,3 +46,6 @@ Generated with Manifest2MD:
 | ------ | ----------- | -----|-------|
 |  Activer l'historique | Sauvegarder automatiquement ou non les versions anciennes d'un élément. Si oui, les versions anciennes seront sauvegardées automatiquement. Quand un élément sera modifié, une version précédente pourra être rétablie. | radio | `Non`, `Oui` (default: `0`)|
 |  Versions maximum | Le nombre maximum d'anciennes versions à sauvegarder. Si zéro, toutes les anciennes versions seront sauvegardées. | text |  (default: `5`)|
+<p> </p>
+Thank you so much for downloading our product. As I said at the beginning, I'd be glad to help you if you have any questions relating to this product. No guarantees, but I'll do my best to assist.
+> ###### Created on *2017-06-08* by *Emmanuel Lecoester (v1) - Marc Letouzé (v2)* ([elecoest@gmail.com - marc.letouze@liubov.net](mailto:elecoest@gmail.com - marc.letouze@liubov.net))
