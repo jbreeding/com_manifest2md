@@ -10,6 +10,8 @@ The final documents are written in MarkDown format.
 6) Click MakeMD button to generate the documentation. That all Folks :)
 
 Manifest2MD makes Documents from .xml files of Published Extensions ...
+Multi-language (fr-FR, en-GB)
+
 Generated with Manifest2MD:
 
 ## Configuration / Parameters
