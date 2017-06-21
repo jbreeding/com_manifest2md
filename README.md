@@ -46,6 +46,6 @@ Generated with Manifest2MD:
 | ------ | ----------- | -----|-------|
 |  Activer l'historique | Sauvegarder automatiquement ou non les versions anciennes d'un élément. Si oui, les versions anciennes seront sauvegardées automatiquement. Quand un élément sera modifié, une version précédente pourra être rétablie. | radio | `Non`, `Oui` (default: `0`)|
 |  Versions maximum | Le nombre maximum d'anciennes versions à sauvegarder. Si zéro, toutes les anciennes versions seront sauvegardées. | text |  (default: `5`)|
-<p> </p>
-Thank you so much for downloading our product. As I said at the beginning, I'd be glad to help you if you have any questions relating to this product. No guarantees, but I'll do my best to assist.
-> ###### Created on *2017-06-08* by *Emmanuel Lecoester (v1) - Marc Letouzé (v2)* ([elecoest@gmail.com - marc.letouze@liubov.net](mailto:elecoest@gmail.com - marc.letouze@liubov.net))
+<p> Thank you so much for downloading our product. As I said at the beginning, I'd be glad to help you if you have any questions relating to this product. No guarantees, but I'll do my best to assist.</p>
+
+###### Created on *2017-06-08* by *Emmanuel Lecoester (v1) - Marc Letouzé (v2)* ([elecoest@gmail.com - marc.letouze@liubov.net](mailto:elecoest@gmail.com - marc.letouze@liubov.net))
