@@ -15,7 +15,7 @@ Multi-language (fr-FR, en-GB)
 Generated with Manifest2MD:
 
 # Component manifest2md
-## Configuration et Parameters
+## Configuration and Parameters
 ### Manifest To MarkDown [manifest2md]
 #### Description: 
 | Option | Description | Type | Value |
