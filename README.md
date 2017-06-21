@@ -48,4 +48,4 @@ Generated with Manifest2MD:
 |  Versions maximum | Le nombre maximum d'anciennes versions à sauvegarder. Si zéro, toutes les anciennes versions seront sauvegardées. | text |  (default: `5`)|
 <p> Thank you so much for downloading our product. As I said at the beginning, I'd be glad to help you if you have any questions relating to this product. No guarantees, but I'll do my best to assist.</p>
 
-###### Created on *2017-06-08* by *Emmanuel Lecoester (v1) - Marc Letouzé (v2)* ([elecoest@gmail.com - marc.letouze@liubov.net](mailto:elecoest@gmail.com - marc.letouze@liubov.net))
+###### Created on *2017-06-08* by *Emmanuel Lecoester (v1) - Marc Letouzé (v2)* ([elecoest@gmail.com - marc.letouze@liubov.net])
