@@ -3,14 +3,15 @@ A Joomla Extension. Manifest2md is a Documentation generator from all the xml fi
 The final documents are written in MarkDown format.
 
 1) Install Manifest2md,
-2) Choose Doc Dir, the Docs Lang, Doc Mode,... in the Manifest2md Component Parameters,
+2) Check Params and choose Doc Dir, Doc Mode,... in the Manifest2md Component Parameters,
 3) Click Discover Button to scan all your Installed Extensions,
 4) Create a Category to group some Extensions (ie: 1 Component, 2 Modules, 1 Plugin needed for 1 Application),
 5) Edit each Extension you want Docs, fill the Form, then publish it,
 6) Click MakeMD button to generate the documentation. That all Folks :)
 
-Manifest2MD makes Documents from .xml files of Published Extensions ...
-Multi-language (fr-FR, en-GB)
+Manifest2MD makes Documents from .xml files of Published Extensions.
+The output will create all language Dir of installed Languages.
+Manifest2MD integrate translations for fr-FR, en-GB ... for the moment.
 
 Generated with Manifest2MD:
 
