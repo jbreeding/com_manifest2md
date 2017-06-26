@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
+
     <fieldset label="COM_MANIFEST2MD" name="manifest2md">
         <field name="doc_home" type="text" size="100" maxlength="100" filter="safehtml" default="/documentation"
                label="COM_MANIFEST2MD_FORM_LBL_DOC_HOME" description="COM_MANIFEST2MD_FORM_DESC_DOC_HOME"
                hint="COM_MANIFEST2MD_FORM_LBL_DOC_HOME"/>
-        <field name="doc_language" type="language" client="site" default="en-GB" label="COM_MANIFEST2MD_FORM_LBL_LANG"
-               description="COM_MANIFEST2MD_FORM_DESC_LANG"/>
-          <field name="delete_folder" type="radio" default="no" label="COM_MANIFEST2MD_DELETE_FOLDER" description="COM_MANIFEST2MD_DELETE_FOLDER_DESC">
+        
+          <field name="delete_folder" type="list" default="no" label="COM_MANIFEST2MD_DELETE_FOLDER" description="COM_MANIFEST2MD_DELETE_FOLDER_DESC">
             <option value="no">Jno</option>
             <option value="yes">Jyes</option>
+        </field>
+          <field name="display_mod" type="list" default="user" label="COM_MANIFEST2MD_DISPLAYMOD" description="COM_MANIFEST2MD_DISPLAYMOD_DESC">
+            <option value="dev">COM_MANIFEST2MD_DEV</option>
+            <option value="user">COM_MANIFEST2MD_USER</option>
         </field>
         <field name="template_config" type="textarea" rows="10" cols="10" filter="JComponentHelper::filterText"
                label="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_CONFIG" description="COM_MANIFEST2MD_FORM_DESC_TEMPLATE_CONFIG"

@@ -49,9 +49,6 @@
             <option value="Items">COM_MANIFEST2MD_EXTENSIONS_DOC_ELEMENT_OPTION_ITEMS</option>
             <option value="Views">COM_MANIFEST2MD_EXTENSIONS_DOC_ELEMENT_OPTION_VIEWS</option>
         </field>
-        <field name="specific_home" label="COM_MANIFEST2MD_FORM_LBL_EXTENSION_SPECIFIC_HOME"
-               description="COM_MANIFEST2MD_FORM_DESC_EXTENSION_SPECIFIC_HOME"
-               hint="COM_MANIFEST2MD_FORM_LBL_EXTENSION_SPECIFIC_HOME" showon="doc_element:config,Items,Views"/>
         <field name="catid" type="category" extension="com_manifest2md" required="true"
                label="COM_MANIFEST2MD_FORM_LBL_EXTENSION_CATEGORY"
                description="COM_MANIFEST2MD_FORM_DESC_EXTENSION_CATEGORY"

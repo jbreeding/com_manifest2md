@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    CVS: 1.0.0
+ * @version    CVS: 2.1.1
  * @package    Com_Manifest2md
  * @author     Emmanuel Lecoester <elecoest@gmail.com>
  * @author     Marc Letouzé <marc.letouze@liubov.net>
@@ -62,13 +62,14 @@ $document->addStyleSheet(JUri::root() . 'media/com_manifest2md/css/form.css');
                            value="<?php echo $this->item->checked_out_time; ?>"/>
 
                     <?php echo $this->form->renderField('created_by'); ?>
-                    <?php echo $this->form->renderField('modified_by'); ?>                <?php echo $this->form->renderField('name'); ?>
+                    <?php echo $this->form->renderField('modified_by'); ?>                
+                    <?php echo $this->form->renderField('name'); ?>
                     <?php echo $this->form->renderField('type'); ?>
                     <?php echo $this->form->renderField('element'); ?>
                     <?php echo $this->form->renderField('folder'); ?>
                     <?php echo $this->form->renderField('identifier'); ?>
                     <?php echo $this->form->renderField('doc_element'); ?>
-                    <?php echo $this->form->renderField('specific_home'); ?>
+                    <?php // echo $this->form->renderField('specific_home'); ?>
                     <?php echo $this->form->renderField('catid'); ?>
 
 

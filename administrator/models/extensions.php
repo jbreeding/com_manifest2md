@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version    CVS: 1.0.0
+ * @version    CVS: 2.1.1
  * @package    Com_Manifest2md
  * @author     Emmanuel Lecoester <elecoest@gmail.com>
  * @author     Marc Letouzé <marc.letouze@liubov.net>
@@ -41,7 +41,7 @@ class Manifest2mdModelExtensions extends JModelList
                 'folder', 'a.`folder`',
                 'identifier', 'a.`identifier`',
                 'doc_element', 'a.`doc_element`',
-                'specific_home', 'a.`specific_home`',
+                // 'specific_home', 'a.`specific_home`',
                 'category', 'a.`catid`',
             );
         }
@@ -289,7 +289,7 @@ class Manifest2mdModelExtensions extends JModelList
         if ($orderCol && $orderDirn) {
             $query->order($db->escape($orderCol . ' ' . $orderDirn));
         }
-
+               
         return $query;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    CVS: 1.0.0
+ * @version    CVS: 2.1.1
  * @package    Com_Manifest2md
  * @author     Emmanuel Lecoester <elecoest@gmail.com>
  * @author     Marc Letouzé <marc.letouze@liubov.net>
@@ -197,7 +197,7 @@ class Manifest2mdModelExtension extends JModelAdmin
             $table->folder = $item->folder;
             $table->identifier = 'nc';
             $table->doc_element = 'config';
-            $table->specific_home = '';
+            // $table->specific_home = '';
             $table->catid = 1;
             $table->check();
             $table->store();
