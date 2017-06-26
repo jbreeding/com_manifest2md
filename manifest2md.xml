@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.0" method="upgrade">
     <name>Manifest2md</name>
-    <creationDate>2017-06-08</creationDate>
+    <creationDate>2017-06-23</creationDate>
     <copyright>2017@Manifest2md</copyright>
     <license>GNU General Public License version 2 ou version ultérieure</license>
     <author>Emmanuel Lecoester (v1) - Marc Letouzé (v2)</author>
     <authorEmail>elecoest@gmail.com - marc.letouze@liubov.net</authorEmail>
-    <authorUrl>https://github.com/jbreeding/Manifest2md</authorUrl>
-    <version>2.0</version>
+    <authorUrl>https://github.com/jbreeding/com_manifest2md</authorUrl>
+    <version>2.1.1</version>
     <description>Manifest To MarkDown V2</description>
 
     <install> <!-- Runs on install -->
@@ -31,6 +31,7 @@
         <filename>manifest2md.php</filename>
         <filename>controller.php</filename>
         <filename>router.php</filename>
+        <folder>language</folder>
         <folder>views</folder>
         <folder>models</folder>
         <folder>controllers</folder>
@@ -42,10 +43,7 @@
         <folder>css</folder>
     </media>
     
-    <languages folder="site">
-        <language tag="en-GB">language/en-GB.com_manifest2md.ini</language>
-        <language tag="fr-FR">language/fr-FR.com_manifest2md.ini</language>
-    </languages>
+
     
     <administration>
         <menu img="media/com_manifest2md/images/s_com_manifest2md.png">COM_MANIFEST2MD</menu>
@@ -71,18 +69,12 @@
             <folder>controllers</folder>
             <folder>assets</folder>
             <folder>helpers</folder>
+            <folder>language</folder>
             <folder>models</folder>
             <folder>sql</folder>
             <folder>tables</folder>
             <folder>views</folder>
         </files>
-        
-        <languages folder="administrator">
-            <language tag="en-GB">language/en-GB/en-GB.com_manifest2md.ini</language>
-            <language tag="en-GB">language/en-GB/en-GB.com_manifest2md.sys.ini</language>
-            <language tag="fr-FR">language/fr-FR/fr-FR.com_manifest2md.ini</language>
-            <language tag="fr-FR">language/fr-FR/fr-FR.com_manifest2md.sys.ini</language>
-        </languages>
         
     </administration>
     <config>
@@ -94,7 +86,7 @@
     </config>
     <!-- Update servers -->
     <updateservers>
-        <server type="extension" priority="1" name="Manifest2md Update Server">https://github.com/jbreeding/Manifest2MD-v2/blob/master/updates/update_manifest2md.xml</server>
+        <server type="extension" priority="1" name="Manifest2md Update Server">https://jbreeding.github.io/com_manifest2md/updates/update_manifest2md.xml</server>
     </updateservers>
     <scriptfile>script.php</scriptfile>
 </extension>
