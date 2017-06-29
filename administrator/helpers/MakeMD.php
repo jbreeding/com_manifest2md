@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  2.0.0
+ * @version  V2.1.1
  * @package    Com_Manifest2md
  * @author     Emmanuel Lecoester <elecoest@gmail.com>
  * @author     Marc Letouzé <marc.letouze@liubov.net>
@@ -96,12 +96,6 @@ class Manifest2mdClassMD
         
         // Load All Language files of Extension
         $lang = JFactory::getLanguage();
-        $lang->load($extension, JPATH_SITE, $this->language, true);
-        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension . '.sys', JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension . '.sys', JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);
         // $lang = self::LoadCompLanguage($extension, $this->language);
         
         // Get few Manifest infos
@@ -109,9 +103,15 @@ class Manifest2mdClassMD
         $manifestMD = self::GetMDManifest();
 
         if ($identifier == "site") {
+            $lang->load($extension, JPATH_SITE, $this->language, true);
+            $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);
             $base_dir = JPATH_ROOT . '/components/' . $extension . '/views/' . $subpath . '/tmpl/' ;
             $newfolder = $this->root .  '/components/' . $extension . '/views/' . $subpath. '/tmpl/'; 
         } else {
+            $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
+            $lang->load($extension . '.sys', JPATH_ADMINISTRATOR, $this->language, true);
+            $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
+            $lang->load($extension . '.sys', JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
             $base_dir = JPATH_ROOT . '/administrator/components/' . $extension . '/views/' . $subpath . '/tmpl/' ;
             $newfolder = $this->root .  '/administrator/components/' . $extension . '/views/' . $subpath . '/tmpl/'; 
             }
@@ -414,12 +414,6 @@ class Manifest2mdClassMD
         
         // Load All Language files of Extension
         $lang = JFactory::getLanguage();
-        $lang->load('joomla', JPATH_SITE, $this->language, true);
-        $lang->load('joomla', JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension, JPATH_SITE, $this->language, true);
-        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);
-        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
         // $lang = self::LoadCompLanguage($extension, $this->language);
         
         // Get few Manifest infos
@@ -427,6 +421,10 @@ class Manifest2mdClassMD
         $manifestMD = self::GetMDManifest();
         
         if ($identifier == "site") {
+            $lang->load('joomla', JPATH_SITE, $this->language, true);
+            $lang->load($extension, JPATH_SITE, $this->language, true);
+            $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);
+
             $xml = JPATH_ROOT . '/components/' . $extension . '/models/forms/' . $object . '.xml';
             if (file_exists($xml)) {
                 $get_xml = simplexml_load_file($xml);
@@ -444,6 +442,9 @@ class Manifest2mdClassMD
                 return ($msg);
                 }            
         } elseif ($identifier == "administrator") {
+            $lang->load('joomla', JPATH_ADMINISTRATOR, $this->language, true);
+            $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
+            $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
             $xml = JPATH_ROOT . '/administrator/components/' . $extension . '/models/forms/' . $object . '.xml';
             if (file_exists($xml)) {
                 $get_xml = simplexml_load_file($xml);
@@ -545,12 +546,6 @@ class Manifest2mdClassMD
         
         // load all Language Files
         $lang = JFactory::getLanguage();
-        $lang->load('joomla', JPATH_SITE, $this->language, true);
-        $lang->load('joomla', JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension, JPATH_SITE, $this->language, true);
-        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);
-        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
 
         // $msg.= self::LoadCompLanguage($extension, $this->language);
         
@@ -559,6 +554,9 @@ class Manifest2mdClassMD
         $manifestMD = self::GetMDManifest();
         
         if ($identifier == "site") {
+            $lang->load('joomla', JPATH_SITE, $this->language, true);
+            $lang->load($extension, JPATH_SITE, $this->language, true);
+            $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);            
             $xml = JPATH_ROOT . '/components/' . $extension . '/models/forms/' . $object . '.xml';
             if (file_exists($xml)) {
                 $get_xml = simplexml_load_file($xml);
@@ -577,6 +575,9 @@ class Manifest2mdClassMD
                 return ($msg);
                 }            
         } elseif ($identifier == "administrator") {
+            $lang->load('joomla', JPATH_ADMINISTRATOR, $this->language, true);
+            $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
+            $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
             $xml = JPATH_ROOT . '/administrator/components/' . $extension . '/models/forms/' . $object . '.xml';
             if (file_exists($xml)) {
                     $get_xml = simplexml_load_file($xml);
@@ -790,8 +791,9 @@ class Manifest2mdClassMD
         
         // load all Language Files
         $lang = JFactory::getLanguage();
-        $lang->load('plg_' . $subpath . '_' . $extension, JPATH_SITE, $this->language, true);
-        $lang->load('plg_' . $subpath . '_' . $extension, JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_SITE, $this->language, true);
+        //$lang->load($extension, JPATH_ADMINISTRATOR.'/modules/'.$extension.'/', $this->language, true); 
         $lang->load($extension, JPATH_SITE.'/modules/'.$extension.'/', $this->language, true);  
         // $lang = self::LoadModuleLanguage($extension, $this->language);
         
