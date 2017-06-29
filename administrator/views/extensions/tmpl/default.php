@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    CVS: 1.0.2
+ * @version    2.0.0
  * @package    Com_Manifest2md
  * @author     Emmanuel Lecoester <elecoest@gmail.com>
  * @author     Marc Letouzé <marc.letouze@liubov.net>
@@ -199,10 +199,6 @@ if (!empty($this->extra_sidebar)) {
                     <th class='left'>
                         <?php echo JHtml::_('grid.sort', 'COM_MANIFEST2MD_EXTENSIONS_SPECIFIC_HOME', 'a.`specific_home`', $listDirn, $listOrder); ?>
                     </th>
-                    <th class='left'>
-                        <?php echo JHtml::_('grid.sort', 'COM_MANIFEST2MD_EXTENSIONS_CATEGORY', 'a.`catid`', $listDirn, $listOrder); ?>
-                    </th>
-
 
                 </tr>
                 </thead>
@@ -290,10 +286,6 @@ if (!empty($this->extra_sidebar)) {
                         <td>
 
                             <?php echo $item->doc_element; ?>
-                        </td>
-                        <td>
-
-                            <?php echo $item->specific_home; ?>
                         </td>
                         <td>
 

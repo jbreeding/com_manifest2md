@@ -5,6 +5,9 @@
         <field name="doc_home" type="text" size="100" maxlength="100" filter="safehtml" default="/documentation"
                label="COM_MANIFEST2MD_FORM_LBL_DOC_HOME" description="COM_MANIFEST2MD_FORM_DESC_DOC_HOME"
                hint="COM_MANIFEST2MD_FORM_LBL_DOC_HOME"/>
+
+        <field name="doc_language" type="language" client="site" default="fr-FR" label="COM_MANIFEST2MD_FORM_LBL_LANG"
+               description="COM_MANIFEST2MD_FORM_DESC_LANG"/>
         
           <field name="delete_folder" type="list" default="no" label="COM_MANIFEST2MD_DELETE_FOLDER" description="COM_MANIFEST2MD_DELETE_FOLDER_DESC">
             <option value="no">Jno</option>
@@ -18,7 +21,7 @@
                label="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_CONFIG" description="COM_MANIFEST2MD_FORM_DESC_TEMPLATE_CONFIG"
                hint="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_CONFIG"/>
         <field name="template_model" type="textarea" rows="10" cols="10" filter="JComponentHelper::filterText"
-               label="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_MODEL" description="COM_MANIFEST2MD_FORM_DESC_TEMPLATE_ITEM"
+               label="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_MODEL" description="COM_MANIFEST2MD_FORM_DESC_TEMPLATE_MODEL"
                hint="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_MODEL"/>
         <field name="template_view" type="textarea" rows="10" cols="10" filter="JComponentHelper::filterText"
                label="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_VIEW" description="COM_MANIFEST2MD_FORM_DESC_TEMPLATE_VIEW"

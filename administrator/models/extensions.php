@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version    CVS: 2.1.1
+ * @version    2.0.0
  * @package    Com_Manifest2md
  * @author     Emmanuel Lecoester <elecoest@gmail.com>
  * @author     Marc Letouzé <marc.letouze@liubov.net>
@@ -78,7 +78,7 @@ class Manifest2mdModelExtensions extends JModelList
         $query->select("a.*");
         $query->from('`#__manifest2md_extensions` AS a');
         $query->where("state = 1");
-        $query->where("doc_element = 'config'");
+        $query->where("doc_element in ('all','config','Items','Views')");
         $query->where("type = 'component'");
 
         $query->select('`category`.alias AS `category`');

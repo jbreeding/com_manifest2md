@@ -1,6 +1,6 @@
 <?php
 /**
- * @version: 2.1.1
+ * @version2.0.0
  * @package    Com_Manifest2md
  * @author     Emmanuel Lecoester <elecoest@gmail.com>
  * @author     Marc Letouzé <marc.letouze@liubov.net>
@@ -11,6 +11,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.controlleradmin');
+// jimport('joomla.language.language');
 
 use Joomla\Utilities\ArrayHelper;
 
@@ -131,40 +132,45 @@ class Manifest2mdControllerExtensions extends JControllerAdmin
         {
         $msg = '';
         
-        require_once(JPATH_SITE . '/administrator/components/com_manifest2md/helpers/aeparam.php');
-        $g_params = new Manifest2mdHelperParam();
-        $params = $g_params->getGlobalParam();
-
+        // require_once(JPATH_SITE . '/administrator/components/com_manifest2md/helpers/aeparam.php');
+        // $g_params = new Manifest2mdHelperParam();
+        // $params = $g_params->getGlobalParam();
+        
         require_once(JPATH_SITE . '/administrator/components/com_manifest2md/helpers/MakeMD.php');
+        
+        $params	= JComponentHelper::getParams( 'com_manifest2md' );
+        $display_mod = $params->get('display_mod');
+
         $g_se_MD = new Manifest2mdClassMD();
 
         $g_se_MD->setParams($params);
-        $display_mod = $params['display_mod'];
+        // $display_mod = $params['display_mod'];
         
-        // Get installed Languages
-        $languages = JLanguageHelper::getLanguages();
+        // Loop installed Languages
+        // $languages = JLanguageHelper::getLanguages();
+        // foreach($languages as $language){
         
-        foreach($languages as $lang){
-            
-            $lang_code = $lang->lang_code;
-            $lang_title = $lang->title;
-            $folder2del = JPATH_ROOT . $params['doc_home'].'/'. $lang_code;
-            
-            // Set language folder after doc_home
-            $g_se_MD->setLanguage($lang_code);
-            $g_se_MD->setRoot(JPATH_ROOT . $params['doc_home']);
+        $doc_home =  $params->get('doc_home');
+        $lang_code = $params->get('doc_language');
+          
+        // Previous Folder to be deleted
+        $folder2del = JPATH_ROOT . $doc_home .'/'. $lang_code;
 
+        // langugag before doc_home
+        $g_se_MD->setLanguage($lang_code);
+        $g_se_MD->setRoot(JPATH_ROOT . $doc_home);
+            
             // delete previous Root Language Folder
             if ($params['delete_folder'] == 'yes') 
                 {
                 if ( JFolder::exists($folder2del) ) {
                     self::DeleteFolder($folder2del);
                     if ( JFolder::exists($folder2del) ) {
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_FOLDER_NOT_DELETED') .': </b></u>'
-                              . '<p>=> ' .  $folder2del . '</p>';   
+                        $msg .= '<p><b><u>'. JText::_('COM_MANIFEST2MD_FOLDER_NOT_DELETED') .': </b></u>'
+                              . '<br />=> ' .  $folder2del . '</p>';   
                         } else {
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_FOLDER_DELETED') .': </b></u>'
-                                  . '<p>=> ' .  $folder2del . '</p>'; 
+                        $msg .= '<p><b><u>'. JText::_('COM_MANIFEST2MD_FOLDER_DELETED') .': </b></u>'
+                                  . '<br />=> ' .  $folder2del . '</p>'; 
                         }
                     }
                 }
@@ -178,111 +184,151 @@ class Manifest2mdControllerExtensions extends JControllerAdmin
                 foreach ($items as $item) {
                     $category = $item->category;
                     $element = $item->element;
+                    $doc_element = $item->doc_element;
                     $type = $item->type;
                     $folder='';
                     $identifier = $item->identifier;
-                    $msg .= '<p><big>'. ucfirst($type). ' '. ucfirst($element) .' ['.$lang_title.']</big></p>';
+                    $msg .= '<br /><big>'. JText::_( 'COM_MANIFEST2MD_'. strtoupper($type)). ' '. ucfirst($element) .' ['.$lang_code.']</big></p>';
 
-                    if ($item->identifier == 'both') {
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [site]</u></b>';
-                        $msg .= $g_se_MD->MakeMDModelsUser($category, $element, 'site');
+                    if ($identifier == 'both') {
+                        
+                        switch ($doc_element){
+                        case 'all':
+                        case 'Items':
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [site]</u></b>';
+                            $msg .= $g_se_MD->MakeMDModelsUser($category, $element, 'site');
+                  
+                            $msg .= '<p></p>';
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [administrator]</u></b>';
+                            $msg .= $g_se_MD->MakeMDModelsUser($category, $element, 'administrator');
+                            break;
 
-                        $msg .= '<p></p>';
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [administrator]</u></b>';
-                        $msg .= $g_se_MD->MakeMDModelsUser($category, $element, 'administrator');
+                        case 'all':
+                        case 'Views':  
+                            $msg .= '<p></p>';
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [site]</u></b>';
+                            $msg .= $g_se_MD->MakeMDViewsUser($category, $element, 'site');
 
-                        $msg .= '<p></p>';
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [site]</u></b>';
-                        $msg .= $g_se_MD->MakeMDViewsUser($category, $element, 'site');
-
-                        $msg .= '<p></p>';
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [administrator]</u></b>';              
-                        $msg .= $g_se_MD->MakeMDViewsUser($category, $element, 'administrator');
-
-                    } else {
-                        $msg .= '<p></p>';
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [' . $identifier . ']</u></b>';
-                        $msg .= $g_se_MD->MakeMDModelsUser($category, $element, $identifier);
-
-                        $msg .= '<p></p>';
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [' . $identifier . ']</u></b>';     
-                        $msg .= $g_se_MD->MakeMDViewsUser($category, $element, $identifier);
+                            $msg .= '<p></p>';
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [administrator]</u></b>';              
+                            $msg .= $g_se_MD->MakeMDViewsUser($category, $element, 'administrator');
+                            break;
                         }
 
-
-                    $msg .= '<p></p>';
-                    // fichier de config & access
-                    $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_CONFIG') .'</u></b>';
-                    $msg .= '<br />=> ' .  $g_se_MD->MakeMDConfigUser($category, $element) ;
-                    $msg .= '<p></p>';
+                    } else {
+                        switch ($doc_element){
+                        case 'all':
+                        case 'Items':                        
+                            $msg .= '<p></p>';
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [' . $identifier . ']</u></b>';
+                            $msg .= $g_se_MD->MakeMDModelsUser($category, $element, $identifier);
+                            break;
+                        
+                        case 'all':
+                        case 'Views':                         
+                            $msg .= '<p></p>';
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [' . $identifier . ']</u></b>';     
+                            $msg .= $g_se_MD->MakeMDViewsUser($category, $element, $identifier);
+                            break;
+                            }
+                        }
+                    switch ($doc_element){
+                        case 'all':
+                        case 'config':                        
+                        $msg .= '<p></p>';
+                        // fichier de config & access
+                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_CONFIG') .'</u></b>';
+                        $msg .= '<br />=> ' .  $g_se_MD->MakeMDConfigUser($category, $element) ;
+                        $msg .= '<p></p>';
+                        break;
+                        }
                     }
                 break;
+            
                 case 'dev':
                 foreach ($items as $item) {
                     $element = $item->element;
                     $type = $item->type;
                     $identifier = $item->identifier;
+                    $doc_element =$item->doc_element;
                     $folder='';
                     $msg .= '<p><big>'. ucfirst($type). ' '. ucfirst($element) .'</big></p>';
 
                     if ($item->identifier == 'both') {
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [site]</u></b>';
-                        $msg .= $g_se_MD->MakeMDModelsDev($element, 'site');
+                        switch ($doc_element){
+                        case 'all':
+                        case 'Items':                        
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [site]</u></b>';
+                            $msg .= $g_se_MD->MakeMDModelsDev($element, 'site');
 
-                        $msg .= '<p></p>';
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [administrator]</u></b>';
-                        $msg .= $g_se_MD->MakeMDModelsDev($element, 'administrator');
+                            $msg .= '<p></p>';
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [administrator]</u></b>';
+                            $msg .= $g_se_MD->MakeMDModelsDev($element, 'administrator');
+                            break;
+                        case 'all':
+                        case 'Views':                         
+                            $msg .= '<p></p>';
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [site]</u></b>';
+                            $msg .= $g_se_MD->MakeMDViewsDev($element, 'site');
 
-                        $msg .= '<p></p>';
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [site]</u></b>';
-                        $msg .= $g_se_MD->MakeMDViewsDev($element, 'site');
-
-                        $msg .= '<p></p>';
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [administrator]</u></b>';              
-                        $msg .= $g_se_MD->MakeMDViewsDev($element, 'administrator');
-
+                            $msg .= '<p></p>';
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [administrator]</u></b>';              
+                            $msg .= $g_se_MD->MakeMDViewsDev($element, 'administrator');
+                            break;
+                            }
                     } else {
-                        $msg .= '<p></p>';
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [' . $identifier . ']</u></b>';
-                        $msg .= $g_se_MD->MakeMDModelsDev($element, $identifier);
-
-                        $msg .= '<p></p>';
-                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [' . $identifier . ']</u></b>';     
-                        $msg .= $g_se_MD->MakeMDViewsDev($element, $identifier);
+                        switch ($doc_element){
+                        case 'all':
+                        case 'Items':                            
+                            $msg .= '<p></p>';
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODELS') .' [' . $identifier . ' - '.$lang_code.']</u></b>';
+                            $msg .= $g_se_MD->MakeMDModelsDev($element, $identifier);
+                            break;
+                        case 'all':
+                        case 'Views':                          
+                            $msg .= '<p></p>';
+                            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_VIEWS') .' [' . $identifier . ' - '.$lang_code.']</u></b>';     
+                            $msg .= $g_se_MD->MakeMDViewsDev($element, $identifier);
+                            break;
+                            }
                         }
-
-
-                    $msg .= '<p></p>';
-                    // fichier de config & access
-                    $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_CONFIG') .'</u></b>';
-                    $msg .= '<br />=> ' .  $g_se_MD->MakeMDConfigDev($element) ;
-                    $msg .= '<p></p>';
+                    switch ($doc_element){
+                        case 'all':
+                        case 'config':                          
+                        $msg .= '<p></p>';
+                        // fichier de config & access
+                        $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_CONFIG') .'</u></b>';
+                        $msg .= '<br />=> ' .  $g_se_MD->MakeMDConfigDev($element) ;
+                        $msg .= '<p></p>';
+                        break;
+                        }
                     }
                 break;            
                 }
-
+                
+            $msg .= '<p></p>';               
+            $items = $model->getModules();
+            $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODULES') .'</u></b>';
             // check Display_mod for Modules            
             switch ($display_mod){
                 case 'user':            
-                $items = $model->getModules();
-                $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODULES') .'</u></b>';
                 foreach ($items as $item) {
                     $category = $item->category;
                     $element = $item->element;
                     $type = $item->type;
                     $folder='';
                     $identifier = $item->identifier;
+                    
                     $msg .=  '<br />=> ' .  $g_se_MD->MakeMDModuleUser($category, $element)  ;
                     }
                 break;
                 case 'dev':            
-                $items = $model->getModules();
-                $msg .= '<b><u>'. JText::_('COM_MANIFEST2MD_CHECK_COMPONENT_MODULES') .'</u></b>';
                 foreach ($items as $item) {
                     $element = $item->element;
                     $type = $item->type;
                     $folder='';
                     $identifier = $item->identifier;
+                    
                     $msg .=  '<br />=> ' .  $g_se_MD->MakeMDModuleDev($element)  ;
                     }
                 break;            
@@ -299,7 +345,8 @@ class Manifest2mdControllerExtensions extends JControllerAdmin
                     $element = $item->element;
                     $type = $item->type;
                     $folder = $item->folder;
-                    $identifier = $item->identifier;          
+                    $identifier = $item->identifier; 
+                    
                     $msg .=  '<br />=> ' .  $g_se_MD->MakeMDPluginUser($category, $element, $folder) ;
                     }
                 break;
@@ -308,13 +355,14 @@ class Manifest2mdControllerExtensions extends JControllerAdmin
                     $element = $item->element;
                     $type = $item->type;
                     $folder = $item->folder;
-                    $identifier = $item->identifier;          
+                    $identifier = $item->identifier;     
+                    
                     $msg .=  '<br />=> ' .  $g_se_MD->MakeMDPluginDev($element, $folder) ;
                     }
                 break;
                 }
                 
-            }
+           // } END Languages Loop
       
         $this->setRedirect('index.php?option=com_manifest2md', $msg);
         

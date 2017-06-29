@@ -1,6 +1,6 @@
 <?php
 /**
- * @version    CVS: 1.0.2
+ * @version    2.0.0
  * @package    Com_Manifest2md
  * @author     Emmanuel Lecoester <elecoest@gmail.com>
  * @author     Marc Letouzé <marc.letouze@liubov.net>

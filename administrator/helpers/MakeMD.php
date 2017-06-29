@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  V2.1.1
+ * @version  2.0.0
  * @package    Com_Manifest2md
  * @author     Emmanuel Lecoester <elecoest@gmail.com>
  * @author     Marc Letouzé <marc.letouze@liubov.net>
@@ -19,7 +19,7 @@ class Manifest2mdClassMD
     protected $language = 'en-GB';
 
     /**
-     * Manifest2mdClassMD::MakeMDViewsDev(
+     * Manifest2mdClassMD::MakeMDViewsDev()
      *
      * @param string $extension
      * @param string $identifier
@@ -89,41 +89,24 @@ class Manifest2mdClassMD
      */
     public function MakeMDViewDev($extension, $subpath, $identifier)
         {
-        $lang = JFactory::getLanguage();
-        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension, JPATH_SITE, $this->language, true);
-        
-        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension . '.sys', JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
-
-        $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);
-
-        $db = JFactory::getDbo();
-        $extension_date = "";
-        $extension_author = "";
-        $extension_authorEmail = "";
         $xml = null;
         $list_xml = null;
         $get_xml = null;
-        $home = null;
-        $msg ='';
-        $query = $db->getQuery(true);
-
-        $query->select($db->quoteName(['name', 'manifest_cache']))
-            ->from($db->quoteName('#__extensions'))
-            ->where('element = ' . $db->quote($extension))
-            ->where($db->quoteName('type') . ' = ' . $db->quote('component'));
-
-        $db->setQuery($query);
-
-        $results = $db->loadObjectList();
-
-        foreach ($results as $result) {
-            $decode = json_decode($result->manifest_cache);
-            $extension_date = $decode->creationDate;
-            $extension_author = $decode->author;
-            $extension_authorEmail = $decode->authorEmail;
-            }
+        $params = $this->params;
+        
+        // Load All Language files of Extension
+        $lang = JFactory::getLanguage();
+        $lang->load($extension, JPATH_SITE, $this->language, true);
+        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension . '.sys', JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension . '.sys', JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);
+        // $lang = self::LoadCompLanguage($extension, $this->language);
+        
+        // Get few Manifest infos
+        $manifest = self::GetManifest($extension,'component');
+        $manifestMD = self::GetMDManifest();
 
         if ($identifier == "site") {
             $base_dir = JPATH_ROOT . '/components/' . $extension . '/views/' . $subpath . '/tmpl/' ;
@@ -165,7 +148,6 @@ class Manifest2mdClassMD
                     $parameters .= '| Name | Label | Description | Type | Required | Default |' . PHP_EOL;
                     $parameters .= '| ---- | ------| ----------- | ---- | -------- | ------- |' . PHP_EOL;
                     
-                     
                     foreach ($fieldset->field as $field) 
                         {
                         $sLine = '| ' . $field['name'] . ' | ' . JText::_($field['label']) . ' | ' . JText::_($field['description']) . ' | ' . $field['type'] . ' | '. $field['required'] .' | ' . $field['default'] . ' |';
@@ -173,17 +155,24 @@ class Manifest2mdClassMD
                         }
                     }
 
-                $content = $this->params['template_view'];
+                if ($params->get('template_view')) 
+                    {  $content = $params->get('template_view');  }
+                else 
+                    {  $content = self::GetTemplateViewParams();  }
                 $extension = str_replace('com_', '', $extension);
-                
+
                 // merge
                 $content = str_replace('{category}', $category, $content);
+                $content = str_replace('{manifest2MD_version}', $manifestMD['version'], $content);
+                $content = str_replace('{manifest2MD_creation_date}', $manifestMD['creationDate'], $content);
+                $content = str_replace('{manifest2MD_author}', $manifestMD['author'], $content);
+                $content = str_replace('{manifest2MD_authorEmail}', $manifestMD['authorEmail'], $content);
                 $content = str_replace('{extension}', $extension, $content);
                 $content = str_replace('{extension_name}', $extension_name, $content);
-                $content = str_replace('{extension_date}', $extension_date, $content);
-                $content = str_replace('{extension_author}', $extension_author, $content);
-                $content = str_replace('{extension_authorEmail}', $extension_authorEmail, $content);
-                $content = str_replace('{description}', $description, $content);
+                $content = str_replace('{extension_version}', $manifest['version'], $content);
+                $content = str_replace('{extension_creation_date}', $manifest['creationDate'], $content);
+                $content = str_replace('{extension_author}', $manifest['author'], $content);
+                $content = str_replace('{extension_authorEmail}', $manifest['authorEmail'], $content);
                 $content = str_replace('{parameters}', $parameters, $content);
                 $content = str_replace('{language}', $this->language, $content);
 
@@ -218,42 +207,25 @@ class Manifest2mdClassMD
      */
     public function MakeMDViewUser($category, $extension, $subpath, $identifier)
         {
-        $lang = JFactory::getLanguage();
-        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension, JPATH_SITE, $this->language, true);
-
-        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension . '.sys', JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
-
-        $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);
-
-        $db = JFactory::getDbo();
-        $extension_date = "";
-        $extension_author = "";
-        $extension_authorEmail = "";
         $xml = null;
         $list_xml = null;
         $get_xml = null;
-        $home = null;
-        $msg ='';
-        $query = $db->getQuery(true);
+        $params = $this->params;
+        
+        // Load All Language files of Extension
+        $lang = JFactory::getLanguage();
+        $lang->load($extension, JPATH_SITE, $this->language, true);
+        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension . '.sys', JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension . '.sys', JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);
+        // $lang = self::LoadCompLanguage($extension, $this->language);
 
-        $query->select($db->quoteName(['name', 'manifest_cache']))
-            ->from($db->quoteName('#__extensions'))
-            ->where('element = ' . $db->quote($extension))
-            ->where($db->quoteName('type') . ' = ' . $db->quote('component'));
-
-        $db->setQuery($query);
-
-        $results = $db->loadObjectList();
-
-        foreach ($results as $result) {
-            $decode = json_decode($result->manifest_cache);
-            $extension_date = $decode->creationDate;
-            $extension_author = $decode->author;
-            $extension_authorEmail = $decode->authorEmail;
-            }
-            
+        // Get few Manifest infos
+        $manifest = self::GetManifest($extension,'component');   
+        $manifestMD = self::GetMDManifest();
+        
         if ($identifier == "site") {
             $base_dir = JPATH_ROOT . '/components/' . $extension . '/views/' . $subpath . '/tmpl/' ;
             $extension = str_replace('com_', '', $extension);
@@ -303,16 +275,25 @@ class Manifest2mdClassMD
                         }
                     }
 
-                $content = $this->params['template_view'];
+                if ($params->get('template_view')) 
+                    {  $content = $params->get('template_view');  }
+                else 
+                    {  $content = self::GetTemplateViewParams();  }
+                $extension = str_replace('com_', '', $extension);
                 
                 // merge
                 $content = str_replace('{category}', $category, $content);
+                $content = str_replace('{manifest2MD_version}', $manifestMD['version'], $content);
+                $content = str_replace('{manifest2MD_creation_date}', $manifestMD['creationDate'], $content);
+                $content = str_replace('{manifest2MD_author}', $manifestMD['author'], $content);
+                $content = str_replace('{manifest2MD_authorEmail}', $manifestMD['authorEmail'], $content);
                 $content = str_replace('{extension}', $extension, $content);
                 $content = str_replace('{extension_name}', $extension_name, $content);
-                $content = str_replace('{extension_date}', $extension_date, $content);
-                $content = str_replace('{extension_author}', $extension_author, $content);
-                $content = str_replace('{extension_authorEmail}', $extension_authorEmail, $content);
                 $content = str_replace('{description}', $description, $content);
+                $content = str_replace('{extension_version}', $manifest['version'], $content);
+                $content = str_replace('{extension_creation_date}', $manifest['creationDate'], $content);
+                $content = str_replace('{extension_author}', $manifest['author'], $content);
+                $content = str_replace('{extension_authorEmail}', $manifest['authorEmail'], $content);
                 $content = str_replace('{parameters}', $parameters, $content);
                 $content = str_replace('{language}', $this->language, $content);
 
@@ -429,14 +410,21 @@ class Manifest2mdClassMD
         {
         $xml = null;
         $get_xml = null;
-        $lang = JFactory::getLanguage();
-        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension . '.sys', JPATH_ADMINISTRATOR, $this->language, true);
+        $params = $this->params;
         
-        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension . '.sys', JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
-
+        // Load All Language files of Extension
+        $lang = JFactory::getLanguage();
+        $lang->load('joomla', JPATH_SITE, $this->language, true);
+        $lang->load('joomla', JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_SITE, $this->language, true);
+        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
         $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);
+        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
+        // $lang = self::LoadCompLanguage($extension, $this->language);
+        
+        // Get few Manifest infos
+        $manifest = self::GetManifest($extension,'component');
+        $manifestMD = self::GetMDManifest();
         
         if ($identifier == "site") {
             $xml = JPATH_ROOT . '/components/' . $extension . '/models/forms/' . $object . '.xml';
@@ -505,14 +493,27 @@ class Manifest2mdClassMD
             }
         }
 
-    $content = $this->params['template_model'];
+    if ($params->get('template_model')) 
+        {  $content = $params->get('template_model');  }
+    else 
+        {  $content = self::GetTemplateModelParams();  }
     $extension = str_replace('com_', '', $extension);
     
     // merge
-    $content = str_replace('{extension}', $extension_name, $content);
+    $content = str_replace('{category}', $category, $content);
+    $content = str_replace('{manifest2MD_version}', $manifestMD['version'], $content);
+    $content = str_replace('{manifest2MD_creation_date}', $manifestMD['creationDate'], $content);
+    $content = str_replace('{manifest2MD_author}', $manifestMD['author'], $content);
+    $content = str_replace('{manifest2MD_authorEmail}', $manifestMD['authorEmail'], $content);
+    
+    $content = str_replace('{extension}', $extension, $content);
     $content = str_replace('{object}', $object, $content);
+    $content = str_replace('{extension_version}', $manifest['version'], $content);
+    $content = str_replace('{extension_creation_date}', $manifest['creationDate'], $content);
+    $content = str_replace('{extension_author}', $manifest['author'], $content);
+    $content = str_replace('{extension_authorEmail}', $manifest['authorEmail'], $content);
     $content = str_replace('{parameters}', $parameters, $content);
-    $content = str_replace('{language}', $this->language, $content);
+    $content = str_replace('{language}', $this->language, $content);    
 
     if ( !fwrite($handle, $content)) 
         {
@@ -540,14 +541,22 @@ class Manifest2mdClassMD
         {
         $xml = null;
         $get_xml = null;
-        $lang = JFactory::getLanguage();
-        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension . '.sys', JPATH_ADMINISTRATOR, $this->language, true);
+        $params = $this->params;
         
-        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension . '.sys', JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
-
+        // load all Language Files
+        $lang = JFactory::getLanguage();
+        $lang->load('joomla', JPATH_SITE, $this->language, true);
+        $lang->load('joomla', JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_SITE, $this->language, true);
+        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
         $lang->load($extension, JPATH_COMPONENT_SITE, $this->language, true);
+        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
+
+        // $msg.= self::LoadCompLanguage($extension, $this->language);
+        
+        // Get few Manifest infos
+        $manifest = self::GetManifest($extension,'component');
+        $manifestMD = self::GetMDManifest();
         
         if ($identifier == "site") {
             $xml = JPATH_ROOT . '/components/' . $extension . '/models/forms/' . $object . '.xml';
@@ -616,13 +625,26 @@ class Manifest2mdClassMD
             }
         }
 
-    $content = $this->params['template_model'];
+    if ($params->get('template_model')) 
+        {  $content = $params->get('template_model');  }
+    else 
+        {  $content = self::GetTemplateModelParams();  }
+    $extension = str_replace('com_', '', $extension);
     
     // merge
+    $content = str_replace('{category}', $category, $content);
+    $content = str_replace('{manifest2MD_version}', $manifestMD['version'], $content);
+    $content = str_replace('{manifest2MD_creation_date}', $manifestMD['creationDate'], $content);
+    $content = str_replace('{manifest2MD_author}', $manifestMD['author'], $content);
+    $content = str_replace('{manifest2MD_authorEmail}', $manifestMD['authorEmail'], $content);
     $content = str_replace('{extension}', $extension, $content);
     $content = str_replace('{object}', $object, $content);
+    $content = str_replace('{extension_version}', $manifest['version'], $content);
+    $content = str_replace('{extension_creation_date}', $manifest['creationDate'], $content);
+    $content = str_replace('{extension_author}', $manifest['author'], $content);
+    $content = str_replace('{extension_authorEmail}', $manifest['authorEmail'], $content);
     $content = str_replace('{parameters}', $parameters, $content);
-    $content = str_replace('{language}', $this->language, $content);
+    $content = str_replace('{language}', $this->language, $content);    
 
     if ( !fwrite($handle, $content)) 
         {
@@ -636,233 +658,7 @@ class Manifest2mdClassMD
         fclose($handle);
         }
     }
-    
-    /**
-     * Manifest2mdClassMD::MakeMDComponentDev(
-     *
-     * @param string $extension
-     * @param string $identifier
-     * @return string
-     */
-    public function MakeMDComponentDev($extension, $identifier)
-    {
-        $msg = "";
-        $list = array();
-
-        //get the list of all .xml files in the folder
-        $original = JFolder::files(JPATH_ROOT . '/administrator/components/' . $extension . '/', '.xml');
-        
-        $msg .= $original;
-
-        //create the final list that contains name of files
-        $total = count($original);
-        $index = 0;
-        for ($i = 0; $i < $total; $i++) {
-            //separate name&extension si besoin ...
-            //remove the file extension and the dot from the filename
-            $list[$index]['name'] = substr($original[$i], 0, -1 * (1 + strlen(JFile::getExt($original[$i]))));
-            //add the extension
-            // $list[$index]['ext'] = JFile::getExt($original[$i]);
-            $msg .= self::MakeMDExtensionDev($extension, $list[$index]['name']);
-            $index++;
-        }
-        return $msg;
-    }
-
-    /**
-     * Manifest2mdClassMD::MakeMDComponentUser(
-     *  UNUSED FUNCTION FOR THE MOMENT
-     * @param string $extension
-     * @param string $category
-     * @param string $identifier
-     * @return string
-     */
-    public function MakeMDComponentUser($category, $extension, $identifier)
-    {
-        $msg = "";
-        $list = array();
-
-        //get the list of all .xml files in the folder
-        $original = JFolder::files(JPATH_ROOT . '/administrator/components/' . $extension . '/', '.xml');
-        
-        $msg .= $original;
-
-        //create the final list that contains name of files
-        $total = count($original);
-        $index = 0;
-        for ($i = 0; $i < $total; $i++) {
-            //separate name&extension si besoin ...
-            //remove the file extension and the dot from the filename
-            $list[$index]['name'] = substr($original[$i], 0, -1 * (1 + strlen(JFile::getExt($original[$i]))));
-            //add the extension
-            // $list[$index]['ext'] = JFile::getExt($original[$i]);
-            $msg .= self::MakeMDExtensionUser($category, $extension, $list[$index]['name']);
-            $index++;
-        }
-        return $msg;
-    }    
-    
-    /**
-     * Manifest2mdClassMD::MakeMDExtensionDev()
-     *
-     * @param string $extension
-     * @param string $name
-     * @return int
-     * @internal param mixed $entity
-     * @internal param mixed $entities
-     */
-    public function MakeMDExtensionDev($extension, $name)
-        {
-        $xml = JPATH_ROOT . '/administrator/components/' . $extension . '/' . $name . '.xml';
-        if (file_exists($xml)) {
-            $get_xml = simplexml_load_file();
-            $filename = $this->root .  '/' . $extension . '.md';
-            $msg .= self::CheckFolder($filename);
-            $handle = fopen($filename, 'w');
-            if ($handle === false)
-                {
-                $msg .= 'File: ' . $filename . ' not writable!' ;
-                return ($msg);
-                }
-        
-            fwrite($handle, '# ' . $extension . ' Component' . PHP_EOL);
-
-            fwrite($handle, '## Modules' . PHP_EOL);
-            foreach ($get_xml->modules->module as $module) {
-                fwrite($handle, '### ' . $module['name'] . PHP_EOL);
-                }
-
-            fwrite($handle, '## Plugins' . PHP_EOL);
-            foreach ($get_xml->plugins->plugin as $plugin) {
-                fwrite($handle, '### ' . $plugin['name'] . PHP_EOL);
-                }
-            fclose($handle);
-            return (JPATH_ROOT . '/administrator/components/' . $extension . '/' . $name . '.xml');
-            }
-        else {
-            $msg .= '<br /> => XML File: ' . $xml . ' not found!' ;
-            return ($msg);
-            }
-        }
-
-    /**
-     * Manifest2mdClassMD::MakeMDExtensionUser()
-     *
-     * @param string $extension
-     * @param string $category
-     * @param string $name
-     * @return int
-     * @internal param mixed $entity
-     * @internal param mixed $entities
-     */
-    public function MakeMDExtensionUser($category, $extension, $name)
-        {
-        $xml = JPATH_ROOT . '/administrator/components/' . $extension . '/' . $name . '.xml';
-        if (file_exists($xml)) {
-            $get_xml = simplexml_load_file($xml);
-            $filename = $this->root .  '/' . $category .  '/BackEnd/' . $name .  '.md';
-            $msg .= self::CheckFolder($filename);
-            $handle = fopen($filename, 'w');
-            if ($handle === false)
-                {
-                $msg .= 'File: ' . $filename . ' not writable!' ;
-                return ($msg);
-                }
-
-            $content = '# ' . $extension . ' Component' . PHP_EOL;
-            $parameters = "" ; 
-            foreach ($get_xml->fieldset as $fieldset) 
-                {
-                // Fieldsets parameters
-                $parameters .= '### ' . JText::_($fieldset['label']) . ' ['.  $fieldset['name'] . ']' . PHP_EOL ;
-                $parameters .=  '#### Description: ' .  JText::_($fieldset['description'])  . PHP_EOL ;      
-                if (isset($fieldset['addfieldpath'])) 
-                    $parameters .=    '#### Addfieldpath: ' . $fieldset['addfieldpath'] . PHP_EOL ; 
-
-                if ($fieldset['name'] == 'permissions')
-                    { // debut permissions
-                    $get_rules = simplexml_load_file(JPATH_ROOT . '/administrator/components/' . $extension . '/access.xml');
-
-                    $parameters .= '| Action | Description |' . PHP_EOL;
-                    $parameters .= '| ------ | ----------- |' . PHP_EOL;
-                    foreach ($get_rules->section->action as $action) {
-                        $sLine = ' | ' . JText::_($action['title']) . ' | ' . JText::_($action['description']) . ' | ';
-                        $parameters .= $sLine . PHP_EOL;
-                        }
-                    } // fin permissions
-                else 
-                    {
-                    // Fields parameters
-                    $parameters .= '| Option | Description | Type | Value |' . PHP_EOL;
-                    $parameters .= '| ------ | ----------- | -----|-------|' . PHP_EOL;
-
-                    foreach ($fieldset->field as $field)
-                        {
-                        $first = true;
-                        $str = "";
-                        foreach ($field->option as $option) 
-                            {
-                            if ($first) {
-                                $str .= '`' . JText::_($option) . '`';
-                                $first = false;
-                            } else {
-                                $str .= ', `' . JText::_($option) . '`';
-                                }
-                            }
-
-                        $default = (isset($field['default'])) ? ' (default: `' . JText::_($field['default']) . '`)' : '';
-                        $type = $field['type'];
-                        $sLine = '| &nbsp;' . JText::_($field['label']) . ' | ' . JText::_($field['description']) . ' | ' . $type . ' | ' . $str . $default . '|';
-                        $parameters .= $sLine . PHP_EOL;
-
-                        }
-                    }
-                }
-            $content = $this->params['template_component'];
-
-            // merge
-            $content = str_replace('{category}', $category, $content);
-            $content = str_replace('{extension}', $extension, $content);
-            $content = str_replace('{extension_date}', $extension_date, $content);
-            $content = str_replace('{extension_author}', $extension_author, $content);
-            $content = str_replace('{extension_authorEmail}', $extension_authorEmail, $content);
-            $content = str_replace('{parameters}', $parameters, $content);
-            $content = str_replace('{language}', $this->language, $content);
-
-            if ( !fwrite($handle, $content)) 
-                {
-                $msg .= 'File: ' . $filename . ' not writed!' ;
-                return ($msg);
-                }
-            else 
-               {
-                return ($filename);
-                fclose($handle);
-                }        
-
-            fwrite($handle, '## Modules' . PHP_EOL);
-            foreach ($get_xml->modules->module as $module) {
-                $content .=  '### ' . $module['name'] . PHP_EOL;
-            }
-
-            fwrite($handle, '## Plugins' . PHP_EOL);
-            foreach ($get_xml->plugins->plugin as $plugin) {
-                $content .=  '### ' . $plugin['name'] . PHP_EOL;
-            }
-           // final writing
-            $handle = fopen($filename, 'w');
-            if ( !fwrite($handle, $content)) 
-                {
-                $msg .= 'File: ' . $filename . ' not writed!' ;
-                return ($msg);
-                }
-            else 
-               {
-                return ($filename);
-                fclose($handle);
-                }        
-            }
-        }
+      
     /**
      * Manifest2mdClassMD::MakeMDModuleDev()
      *
@@ -874,34 +670,21 @@ class Manifest2mdClassMD
      */
     public function MakeMDModuleDev($extension)
         {
-        $lang = JFactory::getLanguage();
-        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension, JPATH_SITE, $this->language, true);
-        $lang->load('mod_'. $extension, JPATH_MODULES.'/'.$extension.'/', $this->language, true); 
-
-        $db = JFactory::getDbo();
         $xml = null;
         $get_xml = null;
-        $extension_date = "";
-        $extension_author = "";
-        $extension_authorEmail = "";
-        $query = $db->getQuery(true);
+        
+        $params = $this->params;
+        
+        // load all Language Files
+        $lang = JFactory::getLanguage();
+        $lang->load('plg_' . $subpath . '_' . $extension, JPATH_SITE, $this->language, true);
+        $lang->load('plg_' . $subpath . '_' . $extension, JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_SITE.'/modules/'.$extension.'/', $this->language, true);  
+        // $lang = self::LoadModuleLanguage($extension, $this->language);
 
-        $query->select($db->quoteName(['name', 'manifest_cache']))
-            ->from($db->quoteName('#__extensions'))
-            ->where('element = ' . $db->quote($extension))
-            ->where($db->quoteName('type') . ' = ' . $db->quote('module'));
-
-        $db->setQuery($query);
-
-        $results = $db->loadObjectList();
-
-        foreach ($results as $result) {
-            $decode = json_decode($result->manifest_cache);
-            $extension_date = $decode->creationDate;
-            $extension_author = $decode->author;
-            $extension_authorEmail = $decode->authorEmail;
-        }
+        // Get few Manifest infos
+        $manifest = self::GetManifest($extension, 'module');        
+        
         $xml = JPATH_ROOT . '/modules/' . $extension . '/' . $extension . '.xml';
         if (file_exists($xml)){
             $get_xml = simplexml_load_file($xml);
@@ -916,16 +699,6 @@ class Manifest2mdClassMD
                 $msg .= 'File: ' . $filename . ' not writable!' ;
                 return ($msg);
                 }
-
-            if (!empty($get_xml->creationDate)) {
-                $extension_date = $get_xml->creationDate;
-            }
-            if (!empty($get_xml->author)) {
-                $extension_author = $get_xml->author;
-            }
-            if (!empty($get_xml->authorEmail)) {
-                $extension_authorEmail = $get_xml->authorEmail;
-            }
 
             // description
             $description = trim($get_xml->description);
@@ -961,18 +734,25 @@ class Manifest2mdClassMD
                 }
             }
 
-            $content = $this->params['template_module'];
+        if ($params->get('template_module')) 
+            {  $content = $params->get('template_module');  }
+        else 
+            {  $content = self::GetTemplateModuleParams();  }
 
-            // merge
-            $content = str_replace('{category}', $category, $content);
-            $content = str_replace('{extension}', $extension, $content);
-            $content = str_replace('{extension_name}', $extension_name, $content);
-            $content = str_replace('{extension_date}', $extension_date, $content);
-            $content = str_replace('{extension_author}', $extension_author, $content);
-            $content = str_replace('{extension_authorEmail}', $extension_authorEmail, $content);
-            $content = str_replace('{description}', $description, $content);
-            $content = str_replace('{parameters}', $parameters, $content);
-            $content = str_replace('{language}', $this->language, $content);
+        // merge
+        $content = str_replace('{category}', $category, $content);
+        $content = str_replace('{manifest2MD_version}', $manifestMD['version'], $content);
+        $content = str_replace('{manifest2MD_creation_date}', $manifestMD['creationDate'], $content);
+        $content = str_replace('{manifest2MD_author}', $manifestMD['author'], $content);
+        $content = str_replace('{manifest2MD_authorEmail}', $manifestMD['authorEmail'], $content);
+        $content = str_replace('{extension}', $extension, $content);
+        $content = str_replace('{extension_name}', $extension_name, $content);        
+        $content = str_replace('{extension_version}', $manifest['version'], $content);
+        $content = str_replace('{extension_creation_date}', $manifest['creationDate'], $content);
+        $content = str_replace('{extension_author}', $manifest['author'], $content);
+        $content = str_replace('{extension_authorEmail}', $manifest['authorEmail'], $content);
+        $content = str_replace('{parameters}', $parameters, $content);
+        $content = str_replace('{language}', $this->language, $content);     
 
             if ( !fwrite($handle, $content)) 
                 {
@@ -1003,34 +783,22 @@ class Manifest2mdClassMD
      */
     public function MakeMDModuleUser($category, $extension)
         {
-        $lang = JFactory::getLanguage();
-        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension, JPATH_SITE, $this->language, true);
-        $lang->load('mod_'. $extension, JPATH_MODULES.'/'.$extension.'/', $this->language, true); 
-
-        $db = JFactory::getDbo();
         $xml = null;
         $get_xml = null;
-        $extension_date = "";
-        $extension_author = "";
-        $extension_authorEmail = "";
-        $query = $db->getQuery(true);
-
-        $query->select($db->quoteName(['name', 'manifest_cache']))
-            ->from($db->quoteName('#__extensions'))
-            ->where('element = ' . $db->quote($extension))
-            ->where($db->quoteName('type') . ' = ' . $db->quote('module'));
-
-        $db->setQuery($query);
-
-        $results = $db->loadObjectList();
-
-        foreach ($results as $result) {
-            $decode = json_decode($result->manifest_cache);
-            $extension_date = $decode->creationDate;
-            $extension_author = $decode->author;
-            $extension_authorEmail = $decode->authorEmail;
-            }
+        
+        $params = $this->params;
+        
+        // load all Language Files
+        $lang = JFactory::getLanguage();
+        $lang->load('plg_' . $subpath . '_' . $extension, JPATH_SITE, $this->language, true);
+        $lang->load('plg_' . $subpath . '_' . $extension, JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_SITE.'/modules/'.$extension.'/', $this->language, true);  
+        // $lang = self::LoadModuleLanguage($extension, $this->language);
+        
+        // Get few Manifest infos
+        $manifest = self::GetManifest($extension, 'module');   
+        $manifestMD = self::GetMDManifest();
+        
         $xml = JPATH_ROOT . '/modules/' . $extension . '/' . $extension . '.xml';
         if (file_exists($xml)) {
             $get_xml = simplexml_load_file($xml);
@@ -1045,16 +813,6 @@ class Manifest2mdClassMD
                 $msg .= 'File: ' . $filename . ' not writable!' ;
                 return ($msg);
                 }
-
-            if (!empty($get_xml->creationDate)) {
-                $extension_date = $get_xml->creationDate;
-            }
-            if (!empty($get_xml->author)) {
-                $extension_author = $get_xml->author;
-            }
-            if (!empty($get_xml->authorEmail)) {
-                $extension_authorEmail = $get_xml->authorEmail;
-            }
 
             // description
             $description = trim($get_xml->description);
@@ -1090,18 +848,26 @@ class Manifest2mdClassMD
                 }
             }
 
-        $content = $this->params['template_module'];
-
+        if ($params->get('template_module')) 
+            {  $content = $params->get('template_module');  }
+        else 
+            {  $content = self::GetTemplateModuleParams();  }
+        
         // merge
         $content = str_replace('{category}', $category, $content);
+        $content = str_replace('{manifest2MD_version}', $manifestMD['version'], $content);
+        $content = str_replace('{manifest2MD_creation_date}', $manifestMD['creationDate'], $content);
+        $content = str_replace('{manifest2MD_author}', $manifestMD['author'], $content);
+        $content = str_replace('{manifest2MD_authorEmail}', $manifestMD['authorEmail'], $content);
         $content = str_replace('{extension}', $extension, $content);
-        $content = str_replace('{extension_name}', $extension_name, $content);
-        $content = str_replace('{extension_date}', $extension_date, $content);
-        $content = str_replace('{extension_author}', $extension_author, $content);
-        $content = str_replace('{extension_authorEmail}', $extension_authorEmail, $content);
-        $content = str_replace('{description}', $description, $content);
+        $content = str_replace('{extension_name}', $extension_name, $content);        
+        $content = str_replace('{extension_version}', $manifest['version'], $content);
+        $content = str_replace('{extension_creation_date}', $manifest['creationDate'], $content);
+        $content = str_replace('{extension_author}', $manifest['author'], $content);
+        $content = str_replace('{extension_authorEmail}', $manifest['authorEmail'], $content);
         $content = str_replace('{parameters}', $parameters, $content);
-        $content = str_replace('{language}', $this->language, $content);
+        $content = str_replace('{language}', $this->language, $content);        
+        
 
         if ( !fwrite($handle, $content)) 
             {
@@ -1130,36 +896,22 @@ class Manifest2mdClassMD
      * @internal param mixed $entities
      */
     public function MakeMDPluginDev($extension, $subpath)
-        {
+        {        
+        $xml = null;
+        $get_xml = null;
+        $params = $this->params;
+        
+        // load all Language Files
         $lang = JFactory::getLanguage();
         $lang->load('plg_' . $subpath . '_' . $extension, JPATH_SITE, $this->language, true);
         $lang->load('plg_' . $subpath . '_' . $extension, JPATH_ADMINISTRATOR, $this->language, true);
         $lang->load('plg_' . $subpath . '_' . $extension, JPATH_PLUGINS.'/'.$subpath.'/'.$extension.'/', $this->language, true); 
-        
-        $db = JFactory::getDbo();
-        $extension_date = "";
-        $extension_author = "";
-        $extension_authorEmail = "";
-        $xml = null;
-        $get_xml = null;
-        $home = null;
-        $query = $db->getQuery(true);
+        // $lang = self::LoadPluginLanguage($extension, $subpath, $this->language);
 
-        $query->select($db->quoteName(['name', 'manifest_cache']))
-            ->from($db->quoteName('#__extensions'))
-            ->where('element = ' . $db->quote($extension))
-            ->where($db->quoteName('type') . ' = ' . $db->quote('plugin'));
+        // Get few Manifest infos
+        $manifest = self::GetManifest($extension, 'plugin');   
+        $manifestMD = self::GetMDManifest();
 
-        $db->setQuery($query);
-
-        $results = $db->loadObjectList();
-
-        foreach ($results as $result) {
-            $decode = json_decode($result->manifest_cache);
-            $extension_date = $decode->creationDate;
-            $extension_author = $decode->author;
-            $extension_authorEmail = $decode->authorEmail;
-        }
         $xml = JPATH_ROOT . '/plugins/' . $subpath . '/' . $extension . '/' . $extension . '.xml';
         $get_xml = simplexml_load_file($xml);
         if (file_exists($xml)){
@@ -1177,16 +929,6 @@ class Manifest2mdClassMD
                 $msg .= 'File: ' . $filename . ' not writable!' ;
                 return ($msg);
                 }  
-
-            if (!empty($get_xml->creationDate)) {
-                $extension_date = JText::_($get_xml->creationDate);
-            }
-            if (!empty($get_xml->author)) {
-                $extension_author = JText::_($get_xml->author);
-            }
-            if (!empty($get_xml->authorEmail)) {
-                $extension_authorEmail = JText::_($get_xml->authorEmail);
-            }
 
             // description
             $description = trim($get_xml->description);
@@ -1222,18 +964,26 @@ class Manifest2mdClassMD
                 }
             }
 
-        $content = $this->params['template_plugin'];
+        if ($params->get('template_plugin')) 
+            {  $content = $params->get('template_plugin');  }
+        else 
+            {  $content = self::GetTemplatePluginParams();  }
 
         // merge
         $content = str_replace('{category}', $category, $content);
+        $content = str_replace('{manifest2MD_version}', $manifestMD['version'], $content);
+        $content = str_replace('{manifest2MD_creation_date}', $manifestMD['creationDate'], $content);
+        $content = str_replace('{manifest2MD_author}', $manifestMD['author'], $content);
+        $content = str_replace('{manifest2MD_authorEmail}', $manifestMD['authorEmail'], $content);
         $content = str_replace('{extension}', $extension, $content);
-        $content = str_replace('{extension_name}', $extension_name, $content);
-        $content = str_replace('{extension_date}', $extension_date, $content);
-        $content = str_replace('{extension_author}', $extension_author, $content);
-        $content = str_replace('{extension_authorEmail}', $extension_authorEmail, $content);
+        $content = str_replace('{extension_name}', $extension_name, $content);        
+        $content = str_replace('{extension_version}', $manifest['version'], $content);
+        $content = str_replace('{extension_creation_date}', $manifest['creationDate'], $content);
+        $content = str_replace('{extension_author}', $manifest['author'], $content);
+        $content = str_replace('{extension_authorEmail}', $manifest['authorEmail'], $content);
         $content = str_replace('{description}', $description, $content);
         $content = str_replace('{parameters}', $parameters, $content);
-        $content = str_replace('{language}', $this->language, $content);
+        $content = str_replace('{language}', $this->language, $content); 
 
         if ( !fwrite($handle, $content)) 
             {
@@ -1265,34 +1015,22 @@ class Manifest2mdClassMD
      */
     public function MakeMDPluginUser($category, $extension, $subpath)
         {
+        
+        $get_xml = null;
+        $xml = null;
+        $params = $this->params;
+        
+        // load all Language Files
         $lang = JFactory::getLanguage();
         $lang->load('plg_' . $subpath . '_' . $extension, JPATH_SITE, $this->language, true);
         $lang->load('plg_' . $subpath . '_' . $extension, JPATH_ADMINISTRATOR, $this->language, true);
         $lang->load('plg_' . $subpath . '_' . $extension, JPATH_PLUGINS.'/'.$subpath.'/'.$extension.'/', $this->language, true); 
-                
-        $db = JFactory::getDbo();
-        $extension_date = "";
-        $extension_author = "";
-        $extension_authorEmail = "";
-        $get_xml = null;
-        $home = null;
-        $query = $db->getQuery(true);
-
-        $query->select($db->quoteName(['name', 'manifest_cache']))
-            ->from($db->quoteName('#__extensions'))
-            ->where('element = ' . $db->quote($extension))
-            ->where($db->quoteName('type') . ' = ' . $db->quote('plugin'));
-
-        $db->setQuery($query);
-
-        $results = $db->loadObjectList();
-
-        foreach ($results as $result) {
-            $decode = json_decode($result->manifest_cache);
-            $extension_date = $decode->creationDate;
-            $extension_author = $decode->author;
-            $extension_authorEmail = $decode->authorEmail;
-            }
+        // $lang = self::LoadPluginLanguage($extension, $subpath, $this->language);
+        
+        // Get few Manifest infos
+        $manifest = self::GetManifest($extension, 'plugin');  
+        $manifestMD = self::GetMDManifest();
+        
         $xml = JPATH_ROOT . '/plugins/' . $subpath . '/' . $extension . '/' . $extension . '.xml';
         if (file_exists($xml)){
             $get_xml = simplexml_load_file($xml);
@@ -1311,16 +1049,6 @@ class Manifest2mdClassMD
                 $msg .= 'File: ' . $filename . ' not writable!' ;
                 return ($msg);
                 }
-
-            if (!empty($get_xml->creationDate)) {
-                $extension_date = JText::_($get_xml->creationDate);
-            }
-            if (!empty($get_xml->author)) {
-                $extension_author = JText::_($get_xml->author);
-            }
-            if (!empty($get_xml->authorEmail)) {
-                $extension_authorEmail = JText::_($get_xml->authorEmail);
-            }
 
             // description
             $description = trim($get_xml->description);
@@ -1356,18 +1084,26 @@ class Manifest2mdClassMD
                 }
             }
 
-        $content = $this->params['template_plugin'];
+        if ($params->get('template_plugin')) 
+            {  $content = $params->get('template_plugin');  }
+        else 
+            {  $content = self::GetTemplatePluginParams();  }
 
         // merge
         $content = str_replace('{category}', $category, $content);
+        $content = str_replace('{manifest2MD_version}', $manifestMD['version'], $content);
+        $content = str_replace('{manifest2MD_creation_date}', $manifestMD['creationDate'], $content);
+        $content = str_replace('{manifest2MD_author}', $manifestMD['author'], $content);
+        $content = str_replace('{manifest2MD_authorEmail}', $manifestMD['authorEmail'], $content);
         $content = str_replace('{extension}', $extension, $content);
-        $content = str_replace('{extension_name}', $extension_name, $content);
-        $content = str_replace('{extension_date}', $extension_date, $content);
-        $content = str_replace('{extension_author}', $extension_author, $content);
-        $content = str_replace('{extension_authorEmail}', $extension_authorEmail, $content);
+        $content = str_replace('{extension_name}', $extension_name, $content);        
+        $content = str_replace('{extension_version}', $manifest['version'], $content);
+        $content = str_replace('{extension_creation_date}', $manifest['creationDate'], $content);
+        $content = str_replace('{extension_author}', $manifest['author'], $content);
+        $content = str_replace('{extension_authorEmail}', $manifest['authorEmail'], $content);
         $content = str_replace('{description}', $description, $content);
         $content = str_replace('{parameters}', $parameters, $content);
-        $content = str_replace('{language}', $this->language, $content);
+        $content = str_replace('{language}', $this->language, $content); 
 
         if ( !fwrite($handle, $content)) 
             {
@@ -1394,34 +1130,25 @@ class Manifest2mdClassMD
      */
     public function MakeMDConfigDev($extension)
         {
-        $lang = JFactory::getLanguage();
-        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension . '.sys', JPATH_ADMINISTRATOR, $this->language, true);
-        
-        $db = JFactory::getDbo();
-        $extension_date = "";
-        $extension_author = "";
-        $extension_authorEmail = "";
         $xml = null;
         $get_xml = null;
         $home = null;
-        $query = $db->getQuery(true);
+        
+        $params = $this->params;
+        
+        // load all Language Files
+        $lang = JFactory::getLanguage();
+        $lang->load('joomla', JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load('categories', JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
 
-        $query->select($db->quoteName(['name', 'manifest_cache']))
-            ->from($db->quoteName('#__extensions'))
-            ->where('element = ' . $db->quote($extension))
-            ->where($db->quoteName('type') . ' = ' . $db->quote('component'));
+        // $lang = self::LoadCompLanguage($extension, $this->language);
+        
+        // Get few Manifest infos
+        $manifest = self::GetManifest($extension, 'component');
+        $manifestMD = self::GetMDManifest();
 
-        $db->setQuery($query);
-
-        $results = $db->loadObjectList();
-
-        foreach ($results as $result) {
-            $decode = json_decode($result->manifest_cache);
-            $extension_date = $decode->creationDate;
-            $extension_author = $decode->author;
-            $extension_authorEmail = $decode->authorEmail;
-            }
         $xml = JPATH_ROOT . '/administrator/components/' . $extension . '/config.xml';
         if (file_exists($xml)){
             $get_xml = simplexml_load_file($xml);
@@ -1446,12 +1173,15 @@ class Manifest2mdClassMD
                 if ($fieldset['name'] == 'permissions')
                     { // debut permissions
                     $get_rules = simplexml_load_file(JPATH_ROOT . '/administrator/components/' . $extension . '/access.xml');
-
-                    $parameters .= '| Action | Description |' . PHP_EOL;
-                    $parameters .= '| ------ | ----------- |' . PHP_EOL;
-                    foreach ($get_rules->section->action as $action) {
-                        $sLine = ' | ' . JText::_($action['title']) . ' | ' . JText::_($action['description']) . ' | ';
-                        $parameters .= $sLine . PHP_EOL;
+                    foreach ($get_rules->section as $section){
+                        $parameters .=    '#### ' . $section['name'] . PHP_EOL ; 
+                        
+                        $parameters .= '| Action | Description |' . PHP_EOL;
+                        $parameters .= '| ------ | ----------- |' . PHP_EOL;
+                        foreach ($get_rules->section->action as $action) {
+                            $sLine = ' | ' . JText::_($action['title']) . ' | ' . JText::_($action['description']) . ' | ';
+                            $parameters .= $sLine . PHP_EOL;
+                            }
                         }
                     } // fin permissions
                 else 
@@ -1482,15 +1212,24 @@ class Manifest2mdClassMD
                         }
                     }
                 }
-            $content = $this->params['template_config'];
+            if ($params->get('template_config')) 
+                {  $content = $params->get('template_config');  }
+            else 
+                {  $content = self::GetTemplateConfigParams();  }
             $extension = str_replace('com_', '', $extension);
 
-            // merge
+            // Manifest2MD infos
             $content = str_replace('{category}', $category, $content);
+            $content = str_replace('{manifest2MD_version}', $manifestMD['version'], $content);
+            $content = str_replace('{manifest2MD_creation_date}', $manifestMD['creationDate'], $content);
+            $content = str_replace('{manifest2MD_author}', $manifestMD['author'], $content);
+            $content = str_replace('{manifest2MD_authorEmail}', $manifestMD['authorEmail'], $content);
+            // Extension infos
             $content = str_replace('{extension}', $extension, $content);
-            $content = str_replace('{extension_date}', $extension_date, $content);
-            $content = str_replace('{extension_author}', $extension_author, $content);
-            $content = str_replace('{extension_authorEmail}', $extension_authorEmail, $content);
+            $content = str_replace('{extension_version}', $manifest['version'], $content);
+            $content = str_replace('{extension_creation_date}', $manifest['creationDate'], $content);
+            $content = str_replace('{extension_author}', $manifest['author'], $content);
+            $content = str_replace('{extension_authorEmail}', $manifest['authorEmail'], $content);
             $content = str_replace('{parameters}', $parameters, $content);
             $content = str_replace('{language}', $this->language, $content);
 
@@ -1520,34 +1259,23 @@ class Manifest2mdClassMD
      */
     public function MakeMDConfigUser($category, $extension)
         {
-        $lang = JFactory::getLanguage();
-        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
-        $lang->load($extension . '.sys', JPATH_ADMINISTRATOR, $this->language, true);
-        
-        $db = JFactory::getDbo();
-        $extension_date = "";
-        $extension_author = "";
-        $extension_authorEmail = "";
         $xml = null;
         $get_xml = null;
         $home = null;
-        $query = $db->getQuery(true);
-
-        $query->select($db->quoteName(['name', 'manifest_cache']))
-            ->from($db->quoteName('#__extensions'))
-            ->where('element = ' . $db->quote($extension))
-            ->where($db->quoteName('type') . ' = ' . $db->quote('component'));
-
-        $db->setQuery($query);
-
-        $results = $db->loadObjectList();
-
-        foreach ($results as $result) {
-            $decode = json_decode($result->manifest_cache);
-            $extension_date = $decode->creationDate;
-            $extension_author = $decode->author;
-            $extension_authorEmail = $decode->authorEmail;
-            }
+        
+        $params = $this->params;
+        
+        $lang = JFactory::getLanguage();
+        $lang->load('joomla', JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load('categories', JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_ADMINISTRATOR, $this->language, true);
+        $lang->load($extension, JPATH_COMPONENT_ADMINISTRATOR, $this->language, true);
+       
+        //$lang = self::LoadCompLanguage($extension, $this->language);
+        
+        // Get few Manifest infos
+        $manifest = self::GetManifest($extension, 'component');
+        $manifestMD = self::GetMDManifest();
             
         $xml = JPATH_ROOT . '/administrator/components/' . $extension . '/config.xml';
         if (file_exists($xml)){
@@ -1573,12 +1301,15 @@ class Manifest2mdClassMD
                 if ($fieldset['name'] == 'permissions')
                     { // debut permissions
                     $get_rules = simplexml_load_file(JPATH_ROOT . '/administrator/components/' . $extension . '/access.xml');
-
-                    $parameters .= '| Action | Description |' . PHP_EOL;
-                    $parameters .= '| ------ | ----------- |' . PHP_EOL;
-                    foreach ($get_rules->section->action as $action) {
-                        $sLine = ' | ' . JText::_($action['title']) . ' | ' . JText::_($action['description']) . ' | ';
-                        $parameters .= $sLine . PHP_EOL;
+                    foreach ($get_rules->section as $section){
+                        $parameters .=    '#### ' . $section['name'] . PHP_EOL ; 
+                        
+                        $parameters .= '| Action | Description |' . PHP_EOL;
+                        $parameters .= '| ------ | ----------- |' . PHP_EOL;
+                        foreach ($section->action as $action) {
+                            $sLine = ' | ' . JText::_($action['title']) . ' | ' . JText::_($action['description']) . ' | ';
+                            $parameters .= $sLine . PHP_EOL;
+                            }
                         }
                     } // fin permissions
                 else 
@@ -1609,15 +1340,23 @@ class Manifest2mdClassMD
                         }
                     }
                 }
-            $content = $this->params['template_config'];
+            if ($params->get('template_config')) 
+                {  $content = $params->get('template_config');  }
+            else 
+                {  $content = self::GetTemplateConfigParams();  }
             $extension = str_replace('com_', '', $extension);
 
             // merge
             $content = str_replace('{category}', $category, $content);
+            $content = str_replace('{manifest2MD_version}', $manifestMD['version'], $content);
+            $content = str_replace('{manifest2MD_creation_date}', $manifestMD['creationDate'], $content);
+            $content = str_replace('{manifest2MD_author}', $manifestMD['author'], $content);
+            $content = str_replace('{manifest2MD_authorEmail}', $manifestMD['authorEmail'], $content);
             $content = str_replace('{extension}', $extension, $content);
-            $content = str_replace('{extension_date}', $extension_date, $content);
-            $content = str_replace('{extension_author}', $extension_author, $content);
-            $content = str_replace('{extension_authorEmail}', $extension_authorEmail, $content);
+            $content = str_replace('{extension_version}', $manifest['version'], $content);
+            $content = str_replace('{extension_creation_date}', $manifest['creationDate'], $content);
+            $content = str_replace('{extension_author}', $manifest['author'], $content);
+            $content = str_replace('{extension_authorEmail}', $manifest['authorEmail'], $content);
             $content = str_replace('{parameters}', $parameters, $content);
             $content = str_replace('{language}', $this->language, $content);
 
@@ -1672,14 +1411,157 @@ class Manifest2mdClassMD
         $this->root = $url;
         $this->root = rtrim($this->root, '/') . '/' . $this->language ;
     }
+                
+    public function GetManifest($extension, $type){    
+        
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
 
-    /**
-     * @param array $url
-     */
+        $query->select($db->quoteName(['name', 'manifest_cache']))
+            ->from($db->quoteName('#__extensions'))
+            ->where('element = ' . $db->quote($extension))
+            ->where($db->quoteName('type') . ' = ' . $db->quote($type));
+
+        $db->setQuery($query);
+        $result = $db->loadObject();
+
+        $decode = json_decode($result->manifest_cache);
+        $manifest['version'] = $decode->version;
+        $manifest['creationDate'] = $decode->creationDate;
+        $manifest['author'] = $decode->author;
+        $manifest['authorEmail'] = $decode->authorEmail;
+        
+        return $manifest;
+            
+        }
+        
+    public function GetMDManifest(){    
+        
+        $manifestMD = array();
+        
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+
+        $query->select($db->quoteName(['name', 'manifest_cache']))
+            ->from($db->quoteName('#__extensions'))
+            ->where('type = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_manifest2md'));
+
+        $db->setQuery($query);
+        $result = $db->loadObject();
+
+        $decode = json_decode($result->manifest_cache);
+        $manifestMD['version'] = $decode->version;
+        $manifestMD['author'] = $decode->author;
+        $manifestMD['authorEmail'] = $decode->authorEmail;
+        
+        return $manifestMD;
+        }
+        
+    public function GetTemplateViewParams (){
+        $params['template_view'] = '';
+        $params['template_view'] .= '# '. JText::_('COM_MANIFEST2MD_COMPONENT') .' {extension}' . PHP_EOL;
+        $params['template_view'] .= '## '. JText::_('COM_MANIFEST2MD_VIEW_EXT') .' {extension_name}' . PHP_EOL;
+        $params['template_view'] .= '### {description}' . PHP_EOL;
+        $params['template_view'] .= PHP_EOL;
+        $params['template_view'] .= '#### '. JText::_('COM_MANIFEST2MD_LINK_MENU_FILTERS') . PHP_EOL;
+        $params['template_view'] .= JText::_('COM_MANIFEST2MD_LINK_MENU_OPTIONS') . PHP_EOL;
+        $params['template_view'] .= '{parameters}';
+        $params['template_view'] .= '<p>&nbsp;</p>' . PHP_EOL;
+        $params['template_view'] .= JText::_('COM_MANIFEST2MD_THANK_YOU_SO_MUCH') . PHP_EOL;
+        $params['template_view'] .= '> ###### Generated with **Manifest2md** V{manifest2MD_version} by **{manifest2MD_author}** ([{manifest2MD_authorEmail}])'. PHP_EOL;
+        $params['template_view'] .= '> ###### Document of Extension **{extension}** V{extension_version} created on *{extension_creation_date}* by **{extension_author}** ([{extension_authorEmail}])'. PHP_EOL;
+        
+        return $params['template_view'];
+        }        
+        
+        
+    public function GetTemplateModelParams (){
+        $params['template_model'] = '';
+        $params['template_model'] .= '# '. JText::_('COM_MANIFEST2MD_COMPONENT') .' {extension}' . PHP_EOL;
+        $params['template_model'] .= '##  '. JText::_('COM_MANIFEST2MD_MODEL_OBJECT') .' {object}' . PHP_EOL;
+        $params['template_model'] .= '{parameters}';
+        $params['template_model'] .= '<p>&nbsp;</p>' . PHP_EOL;
+        $params['template_model'] .= JText::_('COM_MANIFEST2MD_THANK_YOU_SO_MUCH') . PHP_EOL;
+        $params['template_model'] .= '> ###### Generated with **Manifest2md** V{manifest2MD_version} by **{manifest2MD_author}** ([{manifest2MD_authorEmail}])'. PHP_EOL;
+        $params['template_model'] .= '> ###### Document of Extension **{extension}** V{extension_version} created on *{extension_creation_date}* by **{extension_author}** ([{extension_authorEmail}])'. PHP_EOL;
+
+        return $params['template_model'];
+        }        
+        
+
+    public function GetTemplateConfigParams (){
+        $params['template_config'] = '';
+        $params['template_config'] .= '# '. JText::_('COM_MANIFEST2MD_COMPONENT') .' {extension}' . PHP_EOL;
+        $params['template_config'] .= '## '. JText::_('COM_MANIFEST2MD_PARAMETERS_CONFIG') . PHP_EOL;
+        $params['template_config'] .= '{parameters}';
+        $params['template_config'] .= '<p>&nbsp;</p>' . PHP_EOL;
+        $params['template_config'] .= JText::_('COM_MANIFEST2MD_THANK_YOU_SO_MUCH') . PHP_EOL;
+        $params['template_config'] .= '> ###### Generated with **Manifest2md** V{manifest2MD_version} by **{manifest2MD_author}** ([{manifest2MD_authorEmail}])'. PHP_EOL;
+        $params['template_config'] .= '> ###### Document of Extension **{extension}** V{extension_version} created on *{extension_creation_date}* by **{extension_author}** ([{extension_authorEmail}])'. PHP_EOL;
+
+        return $params['template_config'];
+       }
+ 
+    public function GetTemplateModuleParams (){
+       $params['template_module'] = '';
+        $params['template_module'] .= '# Module - {extension_name}' . PHP_EOL;
+        $params['template_module'] .= '## Description:' . PHP_EOL;
+        $params['template_module'] .= '### {description}' . PHP_EOL;
+        $params['template_module'] .= '#### Install the module' . PHP_EOL;
+        $params['template_module'] .= '1. Download the extension to your local machine as a zip file package.' . PHP_EOL;
+        $params['template_module'] .= '2. From the backend of your Joomla site (administration) select **Extensions >> Manager**, then Click the <b>Browse</b> button and select the extension package on your local machine. Then click the **Upload & Install** button to install module.' . PHP_EOL;
+        $params['template_module'] .= '3. Go to **Extensions >> Module**, find and click on **{extension_name}**. Then enable it.' . PHP_EOL;
+        $params['template_module'] .= PHP_EOL;
+        $params['template_module'] .= '### Configure the module' . PHP_EOL;
+        $params['template_module'] .= 'There are many options for you to customize your extension :' . PHP_EOL;
+        $params['template_module'] .= '{parameters}';
+        $params['template_module'] .= '### Frequently Asked Questions' . PHP_EOL;
+        $params['template_module'] .= 'No questions for the moment' . PHP_EOL;
+        $params['template_module'] .= '### Uninstall the module' . PHP_EOL;
+        $params['template_module'] .= '1. Login to Joomla backend.' . PHP_EOL;
+        $params['template_module'] .= '2. Click **Extensions >> Manager** in the top menu.' . PHP_EOL;
+        $params['template_module'] .= '3. Click **Manage** on the left, navigate on the extension and click the Uninstall button on top.' . PHP_EOL;
+        $params['template_module'] .= '<p>&nbsp;</p>' . PHP_EOL;
+        $params['template_module'] .= JText::_('COM_MANIFEST2MD_THANK_YOU_SO_MUCH') . PHP_EOL;
+        $params['template_module'] .= '> ###### Generated with **Manifest2md** V{manifest2MD_version} by **{manifest2MD_author}** ([{manifest2MD_authorEmail}])'. PHP_EOL;
+        $params['template_module'] .= '> ###### Document of Extension **{extension}** V{extension_version} created on *{extension_creation_date}* by **{extension_author}** ([{extension_authorEmail}])'. PHP_EOL;
+
+        return $params['template_module'] ;
+        }           
+           
+     public function GetTemplatePluginParams (){
+        $params['template_plugin'] = '';
+        $params['template_plugin'] .= '# Plugin - {extension_name}' . PHP_EOL;
+        $params['template_plugin'] .= '## Description:' . PHP_EOL;
+        $params['template_plugin'] .= '### {description}' . PHP_EOL;
+        $params['template_plugin'] .= '#### Install the plugin' . PHP_EOL;
+        $params['template_plugin'] .= '1. Download the extension to your local machine as a zip file package.' . PHP_EOL;
+        $params['template_plugin'] .= '2. From the backend of your Joomla site (administration) select **Extensions >> Manager**, then Click the <b>Browse</b> button and select the extension package on your local machine. Then click the **Upload & Install** button to install module.' . PHP_EOL;
+        $params['template_plugin'] .= '3. Go to **Extensions >> Plugin**, find and click on **{extension_name}**. Then enable it.' . PHP_EOL;
+        $params['template_plugin'] .= PHP_EOL;
+        $params['template_plugin'] .= '### Configure the plugin' . PHP_EOL;
+        $params['template_plugin'] .= '#### There are many options for you to customize your extension :' . PHP_EOL;
+        $params['template_plugin'] .= '{parameters}';
+        $params['template_plugin'] .= '### Frequently Asked Questions' . PHP_EOL;
+        $params['template_plugin'] .= 'No questions for the moment' . PHP_EOL;
+        $params['template_plugin'] .= '### Uninstall the plugin' . PHP_EOL;
+        $params['template_plugin'] .= '1. Login to Joomla backend.' . PHP_EOL;
+        $params['template_plugin'] .= '2. Click **Extensions >> Manager** in the top menu.' . PHP_EOL;
+        $params['template_plugin'] .= '3. Click **Manage** on the left, navigate on the extension and click the Uninstall button on top.' . PHP_EOL;
+        $params['template_plugin'] .= '<p>&nbsp;</p>' . PHP_EOL;
+        $params['template_plugin'] .= '> ###### Generated with **Manifest2md** V{manifest2MD_version} by **{manifest2MD_author}** ([{manifest2MD_authorEmail}])'. PHP_EOL;
+        $params['template_plugin'] .= '> ###### Document of Extension **{extension}** V{extension_version} created on *{extension_creation_date}* by **{extension_author}** ([{extension_authorEmail}])'. PHP_EOL;
+
+        return $params['template_plugin'];
+        }          
+           
+           
+           
     public function setParams($params = [])
-    {
-        $this->params = $params;
+        {
+            $this->params = $params;
+        }    
+        
     }
-
-}
 
