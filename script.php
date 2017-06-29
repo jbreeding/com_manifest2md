@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  V2.0
+ * @version    2.0.0
  * @package    Com_Manifest2md
  * @author     Emmanuel Lecoester <elecoest@gmail.com>
  * @author     Marc Letouzé <marc.letouze@liubov.net>
@@ -66,7 +66,7 @@ class com_Manifest2MDInstallerScript
      */
     function install($parent)
     {
-        echo '<p>' . JText::_('COM_MANIFEST2MD_INSTALL') . '</p>';
+        echo '<p>' . JText::_('COM_MANIFEST2MD_UNINSTALL') . '</p>';
     }
 
     /**
@@ -111,7 +111,7 @@ class com_Manifest2MDInstallerScript
     function getParam($name)
     {
         $db = JFactory::getDbo();
-        $db->setQuery('SELECT manifest_cache FROM `#__extensions` WHERE name = "manifest2md"');
+        $db->setQuery('SELECT manifest_cache FROM `#__extensions` WHERE name = "allevents"');
         $manifest = json_decode($db->loadResult(), true);
         return $manifest[$name];
     }
