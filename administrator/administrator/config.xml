@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+
+    <fieldset label="COM_MANIFEST2MD" name="manifest2md">
+        <field name="doc_home" type="text" size="100" maxlength="100" filter="safehtml" default="/documentation"
+               label="COM_MANIFEST2MD_FORM_LBL_DOC_HOME" description="COM_MANIFEST2MD_FORM_DESC_DOC_HOME"
+               hint="COM_MANIFEST2MD_FORM_LBL_DOC_HOME"/>
+
+        <field name="doc_language" type="language" client="site" default="fr-FR" label="COM_MANIFEST2MD_FORM_LBL_LANG"
+               description="COM_MANIFEST2MD_FORM_DESC_LANG"/>
+        
+          <field name="delete_folder" type="list" default="no" label="COM_MANIFEST2MD_DELETE_FOLDER" description="COM_MANIFEST2MD_DELETE_FOLDER_DESC">
+            <option value="no">Jno</option>
+            <option value="yes">Jyes</option>
+        </field>
+          <field name="display_mod" type="list" default="user" label="COM_MANIFEST2MD_DISPLAYMOD" description="COM_MANIFEST2MD_DISPLAYMOD_DESC">
+            <option value="dev">COM_MANIFEST2MD_DEV</option>
+            <option value="user">COM_MANIFEST2MD_USER</option>
+        </field>
+        <field name="template_config" type="textarea" rows="10" cols="10" filter="JComponentHelper::filterText"
+               label="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_CONFIG" description="COM_MANIFEST2MD_FORM_DESC_TEMPLATE_CONFIG"
+               hint="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_CONFIG"/>
+        <field name="template_model" type="textarea" rows="10" cols="10" filter="JComponentHelper::filterText"
+               label="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_MODEL" description="COM_MANIFEST2MD_FORM_DESC_TEMPLATE_MODEL"
+               hint="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_MODEL"/>
+        <field name="template_view" type="textarea" rows="10" cols="10" filter="JComponentHelper::filterText"
+               label="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_VIEW" description="COM_MANIFEST2MD_FORM_DESC_TEMPLATE_VIEW"
+               hint="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_VIEW"/>
+        <field name="template_module" type="textarea" rows="10" cols="10" filter="JComponentHelper::filterText"
+               label="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_MODULE" description="COM_MANIFEST2MD_FORM_DESC_TEMPLATE_MODULE"
+               hint="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_MODULE"/>
+        <field name="template_plugin" type="textarea" rows="10" cols="10" filter="JComponentHelper::filterText"
+               label="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_PLUGIN" description="COM_MANIFEST2MD_FORM_DESC_TEMPLATE_PLUGIN"
+               hint="COM_MANIFEST2MD_FORM_LBL_TEMPLATE_PLUGIN"/>
+    </fieldset>
+
+    <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
+        <field name="rules" type="rules" component="com_manifest2md" class="inputbox" filter="rules" validate="rules"
+               label="JCONFIG_PERMISSIONS_LABEL" section="component"/>
+    </fieldset>
+
+    <fieldset name="component">
+        <field name="save_history" type="radio" class="btn-group btn-group-yesno" default="0"
+               label="JGLOBAL_SAVE_HISTORY_OPTIONS_LABEL" description="JGLOBAL_SAVE_HISTORY_OPTIONS_DESC">
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+
+        <field name="history_limit" type="text" filter="integer" label="JGLOBAL_HISTORY_LIMIT_OPTIONS_LABEL"
+               description="JGLOBAL_HISTORY_LIMIT_OPTIONS_DESC" default="5"/>
+    </fieldset>
+</config>

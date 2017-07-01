@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.0" method="upgrade">
+    <name>Manifest2md</name>
+    <creationDate>01 juillet 2017</creationDate>
+    <copyright>2017@Manifest2md</copyright>
+    <license>GNU General Public License version 2 ou version ultérieure</license>
+    <author>Emmanuel Lecoester (v1) - Marc Letouzé (v2)</author>
+    <authorEmail>elecoest@gmail.com - marc.letouze@liubov.net</authorEmail>
+    <authorUrl>https://github.com/jbreeding/com_manifest2md</authorUrl>
+    <version>2.1.5</version>
+    <description>Manifest To MarkDown V2</description>
+
+    <install> <!-- Runs on install -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <update> <!-- Runs on update -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/update.mysql.utf8.sql</file>
+        </sql>
+    </update>
+    <uninstall> <!-- Runs on uninstall -->
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+
+    <files folder="site">
+        <filename>index.html</filename>
+        <filename>manifest2md.php</filename>
+        <filename>controller.php</filename>
+        <filename>router.php</filename>
+        <folder>language</folder>
+        <folder>views</folder>
+        <folder>models</folder>
+        <folder>controllers</folder>
+        <folder>helpers</folder>
+    </files>
+    
+    <media destination="com_manifest2md" folder="media">
+        <folder>js</folder>
+        <folder>css</folder>
+    </media>
+    
+
+    
+    <administration>
+        <menu img="media/com_manifest2md/images/s_com_manifest2md.png">COM_MANIFEST2MD</menu>
+        <submenu>
+
+            <menu link="option=com_manifest2md&amp;view=extensions" view="extensions"
+                  img="media/com_manifest2md/images/s_extensions.png" alt="Manifest2md/Extensions">
+                COM_MANIFEST2MD_TITLE_EXTENSIONS
+            </menu>
+
+            <menu link="option=com_categories&amp;extension=com_manifest2md" view="categories"
+                  img="media/com_manifest2md/images/s_extensions.png" alt="Manifest2md/Categories">
+                COM_MANIFEST2MD_EXTENSIONS_CATEGORY
+            </menu>
+
+        </submenu>
+        <files folder="administrator">
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+            <filename>controller.php</filename>
+            <filename>index.html</filename>
+            <filename>manifest2md.php</filename>
+            <folder>controllers</folder>
+            <folder>assets</folder>
+            <folder>helpers</folder>
+            <folder>language</folder>
+            <folder>models</folder>
+            <folder>sql</folder>
+            <folder>tables</folder>
+            <folder>views</folder>
+        </files>
+        
+    </administration>
+    <config>
+        <fields name="params">
+            <fieldset name="component">
+                <field name="save_history" default="0"/>
+            </fieldset>
+        </fields>
+    </config>
+    <!-- Update servers -->
+    <updateservers>
+        <server type="extension" priority="1" name="Manifest2md Update Server">https://jbreeding.github.io/com_manifest2md/updates/update_manifest2md.xml</server>
+    </updateservers>
+    <scriptfile>script.php</scriptfile>
+</extension>
