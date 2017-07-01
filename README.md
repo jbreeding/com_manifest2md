@@ -69,4 +69,3 @@ Generated with Manifest2MD:
 
 #### Generated with **Manifest2md** V2.1.5 by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
 
-#### Document of Extension **manifest2md** V2.1.4 created on *2017-06-30* by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
