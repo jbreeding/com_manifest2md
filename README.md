@@ -15,7 +15,7 @@ Manifest2MD integrate translations for fr-FR, en-GB ... for the moment.
 
 Generated with Manifest2MD:
 
-# Component manifest2md
+# Component manifest2md [en-GB]
 ## Configuration and Parameters
 ### Manifest To MarkDown [manifest2md]
 #### Description: 
@@ -45,11 +45,11 @@ Generated with Manifest2MD:
 #### category
 | Action | Description |
 | ------ | ----------- |
- | Create | COM_CATEGORIES_ACCESS_CREATE_DESC | 
- | Delete | COM_CATEGORIES_ACCESS_DELETE_DESC | 
- | Edit | COM_CATEGORIES_ACCESS_EDIT_DESC | 
- | Edit State | COM_CATEGORIES_ACCESS_EDITSTATE_DESC | 
- | Edit Own | COM_CATEGORIES_ACCESS_EDITOWN_DESC | 
+ | Create | New setting for <strong>create actions</strong> in this category and the calculated setting based on the parent category and group permissions. | 
+ | Delete | New setting for <strong>delete actions</strong> on this category and the calculated setting based on the parent category and group permissions. | 
+ | Edit | New setting for <strong>edit actions</strong> on this category and the calculated setting based on the parent category and group permissions. | 
+ | Edit State | New setting for <strong>edit state actions</strong> on this category and the calculated setting based on the parent category and group permissions. | 
+ | Edit Own | New setting for <strong>edit own actions</strong> on this category and the calculated setting based on the parent category and group permissions. | 
 #### extension
 | Action | Description |
 | ------ | ----------- |
@@ -65,8 +65,8 @@ Generated with Manifest2MD:
 |  Enable Versions | Automatically save old versions of an item. If set to Yes, old versions of items are saved automatically. When editing, you may restore from a previous version of the item. | radio | `No`, `Yes` (default: `0`)|
 |  Maximum Versions | The maximum number of old versions of an item to save. If zero, all old versions will be saved. | text |  (default: `5`)|
 
-<p> Thank you so much for downloading our Component.</p>
+<p>Thank you so much for downloading our Component.</p>
 
-#### Generated with **Manifest2md** V2.1.1 by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
+#### Generated with **Manifest2md** V2.1.5 by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
 
-#### Document of Extension **manifest2md** V2.1.1 created on *2017-06-23* by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
+#### Document of Extension **manifest2md** V2.1.4 created on *2017-06-30* by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
