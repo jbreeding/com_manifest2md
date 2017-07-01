@@ -64,7 +64,9 @@ Generated with Manifest2MD:
 | ------ | ----------- | -----|-------|
 |  Enable Versions | Automatically save old versions of an item. If set to Yes, old versions of items are saved automatically. When editing, you may restore from a previous version of the item. | radio | `No`, `Yes` (default: `0`)|
 |  Maximum Versions | The maximum number of old versions of an item to save. If zero, all old versions will be saved. | text |  (default: `5`)|
-<p> </p>
-Thank you so much for downloading our Component.
-###### Generated with **Manifest2md** V2.1.1 by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
-###### Document of Extension **manifest2md** V2.1.1 created on *2017-06-23* by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
+
+<p> Thank you so much for downloading our Component.</p>
+
+#### Generated with **Manifest2md** V2.1.1 by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
+
+#### Document of Extension **manifest2md** V2.1.1 created on *2017-06-23* by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
