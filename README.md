@@ -66,5 +66,5 @@ Generated with Manifest2MD:
 |  Maximum Versions | The maximum number of old versions of an item to save. If zero, all old versions will be saved. | text |  (default: `5`)|
 <p> </p>
 Thank you so much for downloading our Component.
-> ###### Generated with **Manifest2md** V2.1.1 by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
-> ###### Document of Extension **manifest2md** V2.1.1 created on *2017-06-23* by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
+###### Generated with **Manifest2md** V2.1.1 by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
+###### Document of Extension **manifest2md** V2.1.1 created on *2017-06-23* by **Emmanuel Lecoester (v1) - Marc Letouzé (v2)** ([elecoest@gmail.com - marc.letouze@liubov.net])
